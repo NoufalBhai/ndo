@@ -3,10 +3,11 @@
 All notable changes to this project are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project intends to follow [Semantic Versioning](https://semver.org/)
-once the first tagged release ships.
+and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+
+## [0.1.0] - 2026-08-19
 
 ### Added
 
@@ -30,6 +31,9 @@ once the first tagged release ships.
   builds, archives, checksums, and publishes binaries for all five
   targets.
 - `docs/precedence.md` and `docs/recipe-format.md`.
+- `CODE_OF_CONDUCT.md` (Contributor Covenant v2.1, reports routed through
+  GitHub issues) and a README section documenting the SemVer versioning
+  policy.
 
 ### Changed
 
@@ -41,3 +45,6 @@ once the first tagged release ships.
   (`actions/checkout@v7`, `actions/setup-go@v7`,
   `actions/download-artifact@v8`, `actions/upload-artifact@v7`,
   `softprops/action-gh-release@v3`).
+
+[Unreleased]: https://github.com/NoufalBhai/ndo/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/NoufalBhai/ndo/releases/tag/v0.1.0
