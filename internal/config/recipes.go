@@ -10,8 +10,14 @@ import (
 )
 
 // RecipeFile is the schema shared by central.toml and .ndo.toml.
+//
+// Vars are named lookup tables (e.g. vars.folder.work = "D:\learn\work")
+// that recipe param binding checks by param name: if an arg matches a key
+// in the vars group named after its param, the looked-up value is
+// substituted before interpolation. See internal/cli's runRecipe.
 type RecipeFile struct {
-	Recipes map[string]recipe.Recipe `toml:"recipes"`
+	Recipes map[string]recipe.Recipe     `toml:"recipes"`
+	Vars    map[string]map[string]string `toml:"vars,omitempty"`
 }
 
 // LoadRecipeFile reads a recipe file at path. A missing file is not an
@@ -19,7 +25,7 @@ type RecipeFile struct {
 func LoadRecipeFile(path string) (RecipeFile, error) {
 	data, err := os.ReadFile(path)
 	if os.IsNotExist(err) {
-		return RecipeFile{Recipes: map[string]recipe.Recipe{}}, nil
+		return RecipeFile{Recipes: map[string]recipe.Recipe{}, Vars: map[string]map[string]string{}}, nil
 	}
 	if err != nil {
 		return RecipeFile{}, fmt.Errorf("reading %s: %w", path, err)
@@ -31,6 +37,9 @@ func LoadRecipeFile(path string) (RecipeFile, error) {
 	}
 	if rf.Recipes == nil {
 		rf.Recipes = map[string]recipe.Recipe{}
+	}
+	if rf.Vars == nil {
+		rf.Vars = map[string]map[string]string{}
 	}
 	return rf, nil
 }

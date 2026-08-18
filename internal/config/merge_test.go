@@ -64,3 +64,37 @@ func TestMerge(t *testing.T) {
 		})
 	}
 }
+
+func TestMergeVarsKeyLevel(t *testing.T) {
+	central := RecipeFile{Vars: map[string]map[string]string{
+		"folder": {"work": "D:\\learn\\work", "home": "C:\\Users\\me"},
+	}}
+	local := RecipeFile{Vars: map[string]map[string]string{
+		"folder": {"work": "D:\\learn\\work\\ndo", "proj": "D:\\proj"},
+	}}
+
+	got := Merge(central, local)
+	want := map[string]map[string]string{
+		"folder": {
+			"work": "D:\\learn\\work\\ndo", // local overrides this key
+			"home": "C:\\Users\\me",        // central-only key survives
+			"proj": "D:\\proj",             // local-only key added
+		},
+	}
+	if !reflect.DeepEqual(got.Vars, want) {
+		t.Fatalf("Merge().Vars = %+v, want %+v", got.Vars, want)
+	}
+}
+
+func TestMergeVarsGroupOnlyInOneSide(t *testing.T) {
+	central := RecipeFile{Vars: map[string]map[string]string{
+		"folder": {"work": "D:\\learn\\work"},
+	}}
+	local := RecipeFile{Vars: map[string]map[string]string{}}
+
+	got := Merge(central, local)
+	want := map[string]map[string]string{"folder": {"work": "D:\\learn\\work"}}
+	if !reflect.DeepEqual(got.Vars, want) {
+		t.Fatalf("Merge().Vars = %+v, want %+v", got.Vars, want)
+	}
+}

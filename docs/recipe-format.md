@@ -66,6 +66,52 @@ Referencing a `{{token}}` in `command` that isn't in `params` is an error —
 recipes fail loudly on typos rather than silently rendering an empty
 string.
 
+## Vars: named lookup tables for param shortcuts
+
+`vars` groups let a positional arg expand into a longer value — e.g. a
+short folder alias expanding to a full path — without any special syntax
+in the recipe itself:
+
+```toml
+[recipes.o]
+command = "code {{folder}}"
+params = ["folder"]
+
+[vars.folder]
+work = "D:\\learn\\work"
+ndo  = "D:\\learn\\work\\ndo"
+```
+
+```
+ndo o work
+# param "folder" checks the vars group named "folder" for key "work"
+# -> runs: code D:\learn\work
+
+ndo o D:\some\other\path
+# "D:\some\other\path" isn't a key in vars.folder, so it's used as-is
+# -> runs: code D:\some\other\path
+```
+
+The lookup is keyed by **param name**, not recipe name — any recipe with a
+param called `folder` benefits from the same `vars.folder` table. An arg
+that doesn't match a key in the matching group is left untouched, so this
+is purely additive: recipes without a matching vars group behave exactly
+as if vars didn't exist.
+
+Manage entries with:
+
+```bash
+ndo var add folder work "D:\learn\work" [--local]
+ndo var remove folder work [--local]   # remove one entry
+ndo var remove folder [--local]        # remove the whole group
+ndo var list [group] [--local] [--central]
+```
+
+Central and local vars merge **at the key level** (unlike recipes, which
+replace wholesale on collision) — central can hold your common shortcuts,
+and a local `.ndo.toml` can add or override individual keys without
+losing the rest of the central group.
+
 ## `config.toml` (settings)
 
 ```toml

@@ -32,6 +32,8 @@ func runRecipe(deps Deps, stdout, stderr io.Writer, name string, args []string) 
 		return fmt.Errorf("no such recipe: %s (see `ndo list`)", name)
 	}
 
+	args = resolveVars(res.Merged.Vars, r.Params, args)
+
 	command, err := r.Bind(args)
 	if err != nil {
 		return fmt.Errorf("recipe %s: %w", name, err)
@@ -59,4 +61,23 @@ func runRecipe(deps Deps, stdout, stderr io.Writer, name string, args []string) 
 		return &ExitError{Code: code}
 	}
 	return nil
+}
+
+// resolveVars expands args positionally against vars: if the arg at index
+// i matches a key in the vars group named after params[i], it's replaced
+// with the looked-up value. Args with no matching param, or no matching
+// group/key, pass through unchanged — this makes the lookup an opt-in
+// convenience, never a breaking requirement.
+func resolveVars(vars map[string]map[string]string, params, args []string) []string {
+	resolved := make([]string, len(args))
+	copy(resolved, args)
+	for i, paramName := range params {
+		if i >= len(resolved) {
+			break
+		}
+		if value, ok := vars[paramName][resolved[i]]; ok {
+			resolved[i] = value
+		}
+	}
+	return resolved
 }

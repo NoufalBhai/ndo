@@ -100,6 +100,58 @@ func TestRunPropagatesNonZeroExitCode(t *testing.T) {
 	}
 }
 
+func TestRunResolvesArgAgainstMatchingVarsGroup(t *testing.T) {
+	h := newTestRoot(t)
+	central := config.RecipeFile{
+		Recipes: map[string]recipe.Recipe{
+			"o": {Command: "echo {{folder}}", Params: []string{"folder"}},
+		},
+		Vars: map[string]map[string]string{
+			"folder": {"work": "D:\\learn\\work"},
+		},
+	}
+	if err := config.SaveRecipeFile(centralFilePathForTest(h), central); err != nil {
+		t.Fatal(err)
+	}
+
+	root := NewRootCmd("test", h.deps)
+	var out bytes.Buffer
+	root.SetOut(&out)
+	root.SetArgs([]string{"o", "work"})
+	if err := root.Execute(); err != nil {
+		t.Fatalf("run failed: %v", err)
+	}
+	if got := strings.TrimSpace(out.String()); got != "D:\\learn\\work" {
+		t.Fatalf("stdout = %q, want %q", got, "D:\\learn\\work")
+	}
+}
+
+func TestRunFallsBackToLiteralWhenNoVarsMatch(t *testing.T) {
+	h := newTestRoot(t)
+	central := config.RecipeFile{
+		Recipes: map[string]recipe.Recipe{
+			"o": {Command: "echo {{folder}}", Params: []string{"folder"}},
+		},
+		Vars: map[string]map[string]string{
+			"folder": {"work": "D:\\learn\\work"},
+		},
+	}
+	if err := config.SaveRecipeFile(centralFilePathForTest(h), central); err != nil {
+		t.Fatal(err)
+	}
+
+	root := NewRootCmd("test", h.deps)
+	var out bytes.Buffer
+	root.SetOut(&out)
+	root.SetArgs([]string{"o", "D:\\some\\other\\path"})
+	if err := root.Execute(); err != nil {
+		t.Fatalf("run failed: %v", err)
+	}
+	if got := strings.TrimSpace(out.String()); got != "D:\\some\\other\\path" {
+		t.Fatalf("stdout = %q, want unmatched literal passed through", got)
+	}
+}
+
 func centralFilePathForTest(h *rootHarness) string {
 	return centralFilePath(h.deps.NDOHome)
 }

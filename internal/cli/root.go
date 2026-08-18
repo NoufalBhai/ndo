@@ -60,6 +60,7 @@ func NewRootCmd(version string, deps Deps) *cobra.Command {
 		newEditCmd(deps),
 		newRemoveCmd(deps),
 		newInitCmd(deps),
+		newVarCmd(deps),
 	)
 
 	return root
