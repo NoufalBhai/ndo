@@ -1,7 +1,13 @@
 # Internal design/context docs — never committed
 CLAUDE.md
 DESIGN.md
+SCAFFOLD_PLAN.md
 
 # Build artifacts
 /ndo
 /ndo.exe
+/dist/
+/coverage.out
+
+# Personal Claude Code overrides (not team policy)
+.claude/settings.local.json
