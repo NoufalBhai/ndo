@@ -54,21 +54,26 @@ nfpms:
       - rpm
     bindir: /usr/bin
 
-brews:
+homebrew_casks:
   - name: ndo
     repository:
       owner: NoufalBhai
       name: homebrew-ndo
       branch: main
       token: "{{ .Env.GORELEASER_GITHUB_TOKEN }}"
-    directory: Formula
+    directory: Casks
     homepage: https://github.com/NoufalBhai/ndo
     description: >-
       A CLI-first task runner: add recipes from the CLI, layer central and
       local recipe sets, and bind positional arguments naturally.
-    license: MIT
-    test: |
-      system "#{bin}/ndo --version"
+    binaries:
+      - ndo
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/ndo"]
+          end
 
 scoops:
   - name: ndo
