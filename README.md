@@ -28,6 +28,7 @@ plain TOML files.
 - [Docs](#docs)
 - [Development](#development)
 - [Testing](#testing)
+- [Versioning](#versioning)
 - [Design](#design)
 - [License](#license)
 
@@ -236,6 +237,8 @@ color = true
   for recipe, vars, and settings files, plus interpolation/quoting rules.
 - [`CHANGELOG.md`](CHANGELOG.md) — notable changes, in
   [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
+- [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) — community standards for
+  this repository's issues and pull requests.
 
 ## Development
 
@@ -263,6 +266,17 @@ matrix (linux/amd64, linux/arm64, darwin/amd64, darwin/arm64,
 windows/amd64) on every push and pull request. Tagged pushes (`v*.*.*`)
 trigger a release workflow that builds, archives, checksums, and publishes
 binaries for all five targets.
+
+## Versioning
+
+ndo follows [Semantic Versioning](https://semver.org/): given a version
+`MAJOR.MINOR.PATCH`, `MAJOR` changes on breaking changes (recipe/vars
+schema, CLI flag/command removal or renaming), `MINOR` on
+backwards-compatible feature additions, `PATCH` on backwards-compatible
+fixes. Release tags follow `vMAJOR.MINOR.PATCH` (e.g. `v1.2.3`), matching
+what the [release workflow](.github/workflows/release.yml) builds from.
+The project hasn't cut `v1.0.0` yet — see
+[`CHANGELOG.md`](CHANGELOG.md) for what's landed so far.
 
 ## Design
 
