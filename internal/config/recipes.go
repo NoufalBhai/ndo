@@ -6,7 +6,7 @@ import (
 
 	toml "github.com/pelletier/go-toml/v2"
 
-	"github.com/NoufalBhai/ndo/internal/recipe"
+	"github.com/green-threads/ndo/internal/recipe"
 )
 
 // RecipeFile is the schema shared by central.toml and .ndo.toml.

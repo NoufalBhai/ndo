@@ -1,4 +1,4 @@
-module github.com/NoufalBhai/ndo
+module github.com/green-threads/ndo
 
 go 1.24.4
 

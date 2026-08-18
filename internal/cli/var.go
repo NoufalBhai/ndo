@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/NoufalBhai/ndo/internal/config"
+	"github.com/green-threads/ndo/internal/config"
 )
 
 // newVarCmd builds `ndo var`, a named lookup-table group used to expand

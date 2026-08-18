@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/NoufalBhai/ndo/internal/config"
+	"github.com/green-threads/ndo/internal/config"
 )
 
 func newEditCmd(deps Deps) *cobra.Command {

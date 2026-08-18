@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/NoufalBhai/ndo/internal/config"
+	"github.com/green-threads/ndo/internal/config"
 )
 
 func newInitCmd(deps Deps) *cobra.Command {

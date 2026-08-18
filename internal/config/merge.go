@@ -1,6 +1,6 @@
 package config
 
-import "github.com/NoufalBhai/ndo/internal/recipe"
+import "github.com/green-threads/ndo/internal/recipe"
 
 // Merge combines central and local recipe sets. On a name collision, the
 // local entry wholesale-replaces the central one — no field-level

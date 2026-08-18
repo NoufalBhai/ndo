@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/NoufalBhai/ndo/internal/config"
+	"github.com/green-threads/ndo/internal/config"
 )
 
 func TestVarAddCreatesEntry(t *testing.T) {

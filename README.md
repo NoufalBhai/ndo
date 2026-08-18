@@ -1,6 +1,6 @@
 # ndo
 
-[![CI](https://github.com/NoufalBhai/ndo/actions/workflows/ci.yml/badge.svg)](https://github.com/NoufalBhai/ndo/actions/workflows/ci.yml)
+[![CI](https://github.com/green-threads/ndo/actions/workflows/ci.yml/badge.svg)](https://github.com/green-threads/ndo/actions/workflows/ci.yml)
 [![Go Reference](https://img.shields.io/badge/go-1.24-blue)](go.mod)
 [![License: MIT](https://img.shields.io/badge/license-MIT-informational)](LICENSE)
 
@@ -55,13 +55,13 @@ plain TOML files.
 **macOS / Linux — Homebrew:**
 
 ```bash
-brew install NoufalBhai/ndo/ndo
+brew install green-threads/ndo/ndo
 ```
 
 **Windows — [Scoop](https://scoop.sh):**
 
 ```powershell
-scoop bucket add ndo https://github.com/NoufalBhai/scoop-ndo
+scoop bucket add ndo https://github.com/green-threads/scoop-ndo
 scoop install ndo
 ```
 
@@ -78,7 +78,7 @@ sudo rpm -i ndo_<version>_<arch>.rpm            # Fedora/RHEL
 **macOS / Linux — one-line install script:**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/NoufalBhai/ndo/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/green-threads/ndo/main/install.sh | sh
 ```
 
 Downloads the right binary for your OS/arch and installs it to

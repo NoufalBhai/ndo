@@ -3,7 +3,7 @@ package cli
 import (
 	"testing"
 
-	"github.com/NoufalBhai/ndo/internal/config"
+	"github.com/green-threads/ndo/internal/config"
 )
 
 func TestTargetFilePathCentral(t *testing.T) {

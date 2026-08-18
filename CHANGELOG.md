@@ -10,7 +10,7 @@ and this project follows [Semantic Versioning](https://semver.org/).
 ### Added
 
 - Installable packages via goreleaser: a Homebrew tap
-  (`NoufalBhai/homebrew-ndo`), a Scoop bucket (`NoufalBhai/scoop-ndo`),
+  (`green-threads/homebrew-ndo`), a Scoop bucket (`green-threads/scoop-ndo`),
   `.deb`/`.rpm` packages, and a one-line install script (`install.sh`).
 
 ### Changed
@@ -60,5 +60,5 @@ and this project follows [Semantic Versioning](https://semver.org/).
   `actions/download-artifact@v8`, `actions/upload-artifact@v7`,
   `softprops/action-gh-release@v3`).
 
-[Unreleased]: https://github.com/NoufalBhai/ndo/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/NoufalBhai/ndo/releases/tag/v0.1.0
+[Unreleased]: https://github.com/green-threads/ndo/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/green-threads/ndo/releases/tag/v0.1.0

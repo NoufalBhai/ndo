@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/NoufalBhai/ndo/internal/cli"
-	"github.com/NoufalBhai/ndo/internal/config"
+	"github.com/green-threads/ndo/internal/cli"
+	"github.com/green-threads/ndo/internal/config"
 )
 
 // version is overridden at build time via:

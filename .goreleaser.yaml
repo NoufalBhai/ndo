@@ -42,8 +42,8 @@ nfpms:
   - id: ndo
     ids: [ndo]
     package_name: ndo
-    vendor: NoufalBhai
-    homepage: https://github.com/NoufalBhai/ndo
+    vendor: Green Threads
+    homepage: https://github.com/green-threads/ndo
     maintainer: Noufal Bhai <noufalbhai666@gmail.com>
     description: >-
       A CLI-first task runner: add recipes from the CLI, layer central and
@@ -57,12 +57,12 @@ nfpms:
 homebrew_casks:
   - name: ndo
     repository:
-      owner: NoufalBhai
+      owner: green-threads
       name: homebrew-ndo
       branch: main
       token: "{{ .Env.GORELEASER_GITHUB_TOKEN }}"
     directory: Casks
-    homepage: https://github.com/NoufalBhai/ndo
+    homepage: https://github.com/green-threads/ndo
     description: >-
       A CLI-first task runner: add recipes from the CLI, layer central and
       local recipe sets, and bind positional arguments naturally.
@@ -78,12 +78,12 @@ homebrew_casks:
 scoops:
   - name: ndo
     repository:
-      owner: NoufalBhai
+      owner: green-threads
       name: scoop-ndo
       branch: main
       token: "{{ .Env.GORELEASER_GITHUB_TOKEN }}"
     directory: bucket
-    homepage: https://github.com/NoufalBhai/ndo
+    homepage: https://github.com/green-threads/ndo
     description: >-
       A CLI-first task runner: add recipes from the CLI, layer central and
       local recipe sets, and bind positional arguments naturally.
@@ -91,10 +91,10 @@ scoops:
 
 release:
   github:
-    owner: NoufalBhai
+    owner: green-threads
     name: ndo
   footer: |
-    Full details: [CHANGELOG.md](https://github.com/NoufalBhai/ndo/blob/main/CHANGELOG.md)
+    Full details: [CHANGELOG.md](https://github.com/green-threads/ndo/blob/main/CHANGELOG.md)
 
 changelog:
   use: github-native

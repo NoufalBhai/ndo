@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/NoufalBhai/ndo/internal/config"
-	"github.com/NoufalBhai/ndo/internal/recipe"
+	"github.com/green-threads/ndo/internal/config"
+	"github.com/green-threads/ndo/internal/recipe"
 )
 
 func TestRunResolvesAndExecutesRecipe(t *testing.T) {

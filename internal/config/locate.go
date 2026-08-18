@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/NoufalBhai/ndo/internal/recipe"
+	"github.com/green-threads/ndo/internal/recipe"
 )
 
 // DefaultLocalFileName is the local recipe filename searched for upward

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/NoufalBhai/ndo/internal/recipe"
+	"github.com/green-threads/ndo/internal/recipe"
 )
 
 // ExitError signals that a recipe's command ran to completion but exited

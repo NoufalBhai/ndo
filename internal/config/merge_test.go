@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/NoufalBhai/ndo/internal/recipe"
+	"github.com/green-threads/ndo/internal/recipe"
 )
 
 func TestMerge(t *testing.T) {

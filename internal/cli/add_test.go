@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/NoufalBhai/ndo/internal/config"
+	"github.com/green-threads/ndo/internal/config"
 )
 
 func TestAddCreatesLocalRecipe(t *testing.T) {

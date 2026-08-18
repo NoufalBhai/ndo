@@ -9,8 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/NoufalBhai/ndo/internal/config"
-	"github.com/NoufalBhai/ndo/internal/recipe"
+	"github.com/green-threads/ndo/internal/config"
+	"github.com/green-threads/ndo/internal/recipe"
 )
 
 // Deps bundles what commands need to resolve and run recipes. Built once
