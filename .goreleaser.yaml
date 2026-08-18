@@ -1,0 +1,95 @@
+version: 2
+
+project_name: ndo
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: ndo
+    main: ./cmd/ndo
+    binary: ndo
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+archives:
+  - id: ndo
+    ids: [ndo]
+    formats: [tar.gz]
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+
+checksum:
+  name_template: checksums.txt
+
+nfpms:
+  - id: ndo
+    ids: [ndo]
+    package_name: ndo
+    vendor: NoufalBhai
+    homepage: https://github.com/NoufalBhai/ndo
+    maintainer: Noufal Bhai <noufalbhai666@gmail.com>
+    description: >-
+      A CLI-first task runner: add recipes from the CLI, layer central and
+      local recipe sets, and bind positional arguments naturally.
+    license: MIT
+    formats:
+      - deb
+      - rpm
+    bindir: /usr/bin
+
+brews:
+  - name: ndo
+    repository:
+      owner: NoufalBhai
+      name: homebrew-ndo
+      branch: main
+      token: "{{ .Env.GORELEASER_GITHUB_TOKEN }}"
+    directory: Formula
+    homepage: https://github.com/NoufalBhai/ndo
+    description: >-
+      A CLI-first task runner: add recipes from the CLI, layer central and
+      local recipe sets, and bind positional arguments naturally.
+    license: MIT
+    test: |
+      system "#{bin}/ndo --version"
+
+scoops:
+  - name: ndo
+    repository:
+      owner: NoufalBhai
+      name: scoop-ndo
+      branch: main
+      token: "{{ .Env.GORELEASER_GITHUB_TOKEN }}"
+    directory: bucket
+    homepage: https://github.com/NoufalBhai/ndo
+    description: >-
+      A CLI-first task runner: add recipes from the CLI, layer central and
+      local recipe sets, and bind positional arguments naturally.
+    license: MIT
+
+release:
+  github:
+    owner: NoufalBhai
+    name: ndo
+  footer: |
+    Full details: [CHANGELOG.md](https://github.com/NoufalBhai/ndo/blob/main/CHANGELOG.md)
+
+changelog:
+  use: github-native

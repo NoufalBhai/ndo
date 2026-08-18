@@ -52,7 +52,41 @@ plain TOML files.
 
 ## Install
 
-Download a prebuilt binary for your platform from the
+**macOS / Linux — Homebrew:**
+
+```bash
+brew install NoufalBhai/ndo/ndo
+```
+
+**Windows — [Scoop](https://scoop.sh):**
+
+```powershell
+scoop bucket add ndo https://github.com/NoufalBhai/scoop-ndo
+scoop install ndo
+```
+
+**Linux — .deb / .rpm:**
+
+Download the `.deb` or `.rpm` for your architecture from the
+[Releases page](../../releases) and install with your package manager:
+
+```bash
+sudo apt install ./ndo_<version>_<arch>.deb     # Debian/Ubuntu
+sudo rpm -i ndo_<version>_<arch>.rpm            # Fedora/RHEL
+```
+
+**macOS / Linux — one-line install script:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/NoufalBhai/ndo/main/install.sh | sh
+```
+
+Downloads the right binary for your OS/arch and installs it to
+`/usr/local/bin` (or `~/.local/bin` if that isn't writable).
+
+**Any platform — raw binary:**
+
+Download a prebuilt archive for your platform from the
 [Releases page](../../releases), or build from source (requires Go 1.24+):
 
 ```bash

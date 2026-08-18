@@ -7,6 +7,20 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Installable packages via goreleaser: a Homebrew tap
+  (`NoufalBhai/homebrew-ndo`), a Scoop bucket (`NoufalBhai/scoop-ndo`),
+  `.deb`/`.rpm` packages, and a one-line install script (`install.sh`).
+
+### Changed
+
+- Release pipeline switched from a hand-rolled GitHub Actions matrix to
+  `.goreleaser.yaml` + `goreleaser/goreleaser-action`, which now also
+  drives the packages above. CI's cross-compile job was replaced by
+  `goreleaser check` + `goreleaser build --snapshot` for equivalent
+  per-PR coverage.
+
 ## [0.1.0] - 2026-08-19
 
 ### Added
