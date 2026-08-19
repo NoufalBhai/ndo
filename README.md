@@ -84,6 +84,12 @@ curl -fsSL https://raw.githubusercontent.com/green-threads/ndo/main/install.sh |
 Downloads the right binary for your OS/arch and installs it to
 `/usr/local/bin` (or `~/.local/bin` if that isn't writable).
 
+**Go toolchain:**
+
+```bash
+go install github.com/green-threads/ndo/cmd/ndo@latest
+```
+
 **Any platform — raw binary:**
 
 Download a prebuilt archive for your platform from the
