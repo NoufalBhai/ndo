@@ -1,0 +1,27 @@
+name: Feature request
+description: Suggest an addition or change to ndo
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: What are you trying to do that ndo doesn't support today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: >-
+        What would the command/flag/config look like? If it touches the
+        recipe or vars TOML schema, sketch the shape you have in mind.
+    validations:
+      required: false
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any existing workaround, or other approaches you thought about.
+    validations:
+      required: false
