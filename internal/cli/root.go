@@ -6,6 +6,7 @@ package cli
 import (
 	"io"
 	"path/filepath"
+	"sort"
 
 	"github.com/spf13/cobra"
 
@@ -49,6 +50,7 @@ func NewRootCmd(version string, deps Deps) *cobra.Command {
 			}
 			return runRecipe(deps, cmd.OutOrStdout(), cmd.ErrOrStderr(), args[0], args[1:])
 		},
+		ValidArgsFunction: recipeCompletionFunc(deps),
 	}
 
 	root.PersistentFlags().BoolVar(&flagVerbose, "verbose", false, "print extra diagnostic output, including recipe source file")
@@ -64,6 +66,50 @@ func NewRootCmd(version string, deps Deps) *cobra.Command {
 	)
 
 	return root
+}
+
+// recipeCompletionFunc drives shell tab-completion for the bare
+// `ndo <name> [args...]` invocation:
+//   - at the recipe-name position, it offers every resolved recipe name;
+//   - at a param position, if that param has a matching `vars` group, it
+//     offers that group's keys alongside normal file completion (vars are
+//     an additive shortcut, so completion never hides the option to type
+//     a literal value instead).
+func recipeCompletionFunc(deps Deps) func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	return func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		res, err := loadResolved(deps)
+		if err != nil {
+			return nil, cobra.ShellCompDirectiveError
+		}
+
+		if len(args) == 0 {
+			names := make([]string, 0, len(res.Merged.Recipes))
+			for name := range res.Merged.Recipes {
+				names = append(names, name)
+			}
+			sort.Strings(names)
+			return names, cobra.ShellCompDirectiveNoFileComp
+		}
+
+		r, ok := res.Merged.Recipes[args[0]]
+		if !ok {
+			return nil, cobra.ShellCompDirectiveNoFileComp
+		}
+		paramIdx := len(args) - 1
+		if paramIdx >= len(r.Params) {
+			return nil, cobra.ShellCompDirectiveDefault
+		}
+		group := res.Merged.Vars[r.Params[paramIdx]]
+		if len(group) == 0 {
+			return nil, cobra.ShellCompDirectiveDefault
+		}
+		keys := make([]string, 0, len(group))
+		for k := range group {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		return keys, cobra.ShellCompDirectiveDefault
+	}
 }
 
 func centralFilePath(ndoHome string) string {

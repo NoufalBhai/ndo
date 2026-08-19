@@ -23,6 +23,7 @@ plain TOML files.
   - [`ndo remove`](#ndo-remove)
   - [`ndo init`](#ndo-init)
   - [`ndo var`](#ndo-var)
+  - [Shell completion](#shell-completion)
   - [Global flags](#global-flags)
 - [Configuration](#configuration)
 - [Docs](#docs)
@@ -242,6 +243,32 @@ folder:
 Central and local vars merge **at the key level** — unlike recipes, which
 replace wholesale on a name collision. A local `.ndo.toml` can add or
 override individual keys without losing the rest of the central group.
+
+### Shell completion
+
+`ndo <TAB>` completes recipe names; `ndo <recipe> <TAB>` completes that
+recipe's next declared param — offering the matching `vars` group's keys
+(if any) alongside normal file completion, so you never have to memorize
+what you named an entry.
+
+```bash
+# bash (current shell)
+source <(ndo completion bash)
+
+# zsh (current shell)
+source <(ndo completion zsh)
+
+# fish
+ndo completion fish | source
+```
+
+```powershell
+# PowerShell — add to your profile ($PROFILE) to persist across sessions
+ndo completion powershell | Out-String | Invoke-Expression
+```
+
+Run `ndo completion --help` for instructions on installing the script
+permanently for your shell.
 
 ### Global flags
 

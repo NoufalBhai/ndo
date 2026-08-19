@@ -9,6 +9,11 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Shell tab-completion (`ndo completion bash|zsh|fish|powershell`, via
+  cobra's built-in completion command). `ndo <TAB>` completes recipe
+  names; `ndo <recipe> <TAB>` completes that recipe's next declared
+  param, offering the matching `vars` group's keys (if any) alongside
+  normal file completion.
 - `CONTRIBUTING.md`, `SECURITY.md`, and GitHub issue/PR templates.
 
 ### Changed
