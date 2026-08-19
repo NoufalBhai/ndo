@@ -9,9 +9,23 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- `CONTRIBUTING.md`, `SECURITY.md`, and GitHub issue/PR templates.
+
+### Changed
+
+- CI now runs `go test` on Linux, macOS, and Windows (previously
+  Linux-only for the test job; other OSes were cross-compiled but never
+  actually test-executed).
+
+## [0.1.1] - 2026-08-18
+
+### Added
+
 - Installable packages via goreleaser: a Homebrew tap
   (`green-threads/homebrew-ndo`), a Scoop bucket (`green-threads/scoop-ndo`),
   `.deb`/`.rpm` packages, and a one-line install script (`install.sh`).
+- `go install github.com/green-threads/ndo/cmd/ndo@latest` as an
+  additional install path.
 
 ### Changed
 
@@ -21,7 +35,7 @@ and this project follows [Semantic Versioning](https://semver.org/).
   `goreleaser check` + `goreleaser build --snapshot` for equivalent
   per-PR coverage.
 
-## [0.1.0] - 2026-08-19
+## [0.1.0] - 2026-08-18
 
 ### Added
 
@@ -60,5 +74,6 @@ and this project follows [Semantic Versioning](https://semver.org/).
   `actions/download-artifact@v8`, `actions/upload-artifact@v7`,
   `softprops/action-gh-release@v3`).
 
-[Unreleased]: https://github.com/green-threads/ndo/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/green-threads/ndo/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/green-threads/ndo/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/green-threads/ndo/releases/tag/v0.1.0

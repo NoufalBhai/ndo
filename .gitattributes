@@ -1,0 +1,6 @@
+# Normalize line endings to LF in the repo regardless of OS checkout
+* text=auto eol=lf
+
+# Golden test fixtures are compared byte-for-byte against program output
+# (which always emits \n) — never let git rewrite their line endings.
+testdata/**/*.golden -text
