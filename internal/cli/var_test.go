@@ -9,7 +9,7 @@ import (
 )
 
 func TestVarAddCreatesEntry(t *testing.T) {
-	h := newTestRoot(t, "var", "add", "folder", "work", "D:\\learn\\work", "--local")
+	h := newTestRoot(t, "var", "add", "folder", "work", "C:\\Users\\alex\\projects", "--local")
 	if err := h.Execute(); err != nil {
 		t.Fatalf("var add failed: %v", err)
 	}
@@ -22,8 +22,8 @@ func TestVarAddCreatesEntry(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := rf.Vars["folder"]["work"]; got != "D:\\learn\\work" {
-		t.Fatalf("vars.folder.work = %q, want %q", got, "D:\\learn\\work")
+	if got := rf.Vars["folder"]["work"]; got != "C:\\Users\\alex\\projects" {
+		t.Fatalf("vars.folder.work = %q, want %q", got, "C:\\Users\\alex\\projects")
 	}
 }
 
@@ -56,7 +56,7 @@ func TestVarRemove(t *testing.T) {
 	h := newTestRoot(t)
 
 	add := NewRootCmd("test", h.deps)
-	add.SetArgs([]string{"var", "add", "folder", "work", "D:\\learn\\work", "--local"})
+	add.SetArgs([]string{"var", "add", "folder", "work", "C:\\Users\\alex\\projects", "--local"})
 	if err := add.Execute(); err != nil {
 		t.Fatalf("var add failed: %v", err)
 	}
@@ -81,12 +81,12 @@ func TestVarListGroupedOutput(t *testing.T) {
 	h := newTestRoot(t)
 
 	add1 := NewRootCmd("test", h.deps)
-	add1.SetArgs([]string{"var", "add", "folder", "work", "D:\\learn\\work", "--local"})
+	add1.SetArgs([]string{"var", "add", "folder", "work", "C:\\Users\\alex\\projects", "--local"})
 	if err := add1.Execute(); err != nil {
 		t.Fatalf("var add failed: %v", err)
 	}
 	add2 := NewRootCmd("test", h.deps)
-	add2.SetArgs([]string{"var", "add", "folder", "ndo", "D:\\learn\\work\\ndo", "--local"})
+	add2.SetArgs([]string{"var", "add", "folder", "ndo", "C:\\Users\\alex\\projects\\ndo", "--local"})
 	if err := add2.Execute(); err != nil {
 		t.Fatalf("var add failed: %v", err)
 	}
@@ -99,7 +99,7 @@ func TestVarListGroupedOutput(t *testing.T) {
 		t.Fatalf("var list failed: %v", err)
 	}
 
-	want := "folder:\n    ndo: D:\\learn\\work\\ndo\n    work: D:\\learn\\work\n"
+	want := "folder:\n    ndo: C:\\Users\\alex\\projects\\ndo\n    work: C:\\Users\\alex\\projects\n"
 	if got := out.String(); got != want {
 		t.Fatalf("var list output = %q, want %q", got, want)
 	}
@@ -109,12 +109,12 @@ func TestVarRemoveWholeGroup(t *testing.T) {
 	h := newTestRoot(t)
 
 	add1 := NewRootCmd("test", h.deps)
-	add1.SetArgs([]string{"var", "add", "folder", "work", "D:\\learn\\work", "--local"})
+	add1.SetArgs([]string{"var", "add", "folder", "work", "C:\\Users\\alex\\projects", "--local"})
 	if err := add1.Execute(); err != nil {
 		t.Fatalf("var add failed: %v", err)
 	}
 	add2 := NewRootCmd("test", h.deps)
-	add2.SetArgs([]string{"var", "add", "folder", "ndo", "D:\\learn\\work\\ndo", "--local"})
+	add2.SetArgs([]string{"var", "add", "folder", "ndo", "C:\\Users\\alex\\projects\\ndo", "--local"})
 	if err := add2.Execute(); err != nil {
 		t.Fatalf("var add failed: %v", err)
 	}

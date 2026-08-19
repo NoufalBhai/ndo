@@ -18,7 +18,7 @@ func TestRecipeFileRoundTrip(t *testing.T) {
 			"test": {Command: "go test ./...", Description: "run tests"},
 		},
 		Vars: map[string]map[string]string{
-			"folder": {"work": "D:\\learn\\work"},
+			"folder": {"work": "C:\\Users\\alex\\projects"},
 		},
 	}
 

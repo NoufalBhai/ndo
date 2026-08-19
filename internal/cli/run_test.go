@@ -107,7 +107,7 @@ func TestRunResolvesArgAgainstMatchingVarsGroup(t *testing.T) {
 			"o": {Command: "echo {{folder}}", Params: []string{"folder"}},
 		},
 		Vars: map[string]map[string]string{
-			"folder": {"work": "D:\\learn\\work"},
+			"folder": {"work": "C:\\Users\\alex\\projects"},
 		},
 	}
 	if err := config.SaveRecipeFile(centralFilePathForTest(h), central); err != nil {
@@ -121,8 +121,8 @@ func TestRunResolvesArgAgainstMatchingVarsGroup(t *testing.T) {
 	if err := root.Execute(); err != nil {
 		t.Fatalf("run failed: %v", err)
 	}
-	if got := strings.TrimSpace(out.String()); got != "D:\\learn\\work" {
-		t.Fatalf("stdout = %q, want %q", got, "D:\\learn\\work")
+	if got := strings.TrimSpace(out.String()); got != "C:\\Users\\alex\\projects" {
+		t.Fatalf("stdout = %q, want %q", got, "C:\\Users\\alex\\projects")
 	}
 }
 
@@ -133,7 +133,7 @@ func TestRunFallsBackToLiteralWhenNoVarsMatch(t *testing.T) {
 			"o": {Command: "echo {{folder}}", Params: []string{"folder"}},
 		},
 		Vars: map[string]map[string]string{
-			"folder": {"work": "D:\\learn\\work"},
+			"folder": {"work": "C:\\Users\\alex\\projects"},
 		},
 	}
 	if err := config.SaveRecipeFile(centralFilePathForTest(h), central); err != nil {

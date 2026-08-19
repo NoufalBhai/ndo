@@ -78,14 +78,14 @@ command = "code {{folder}}"
 params = ["folder"]
 
 [vars.folder]
-work = "D:\\learn\\work"
-ndo  = "D:\\learn\\work\\ndo"
+work = "C:\\Users\\alex\\projects"
+ndo  = "C:\\Users\\alex\\projects\\ndo"
 ```
 
 ```
 ndo o work
 # param "folder" checks the vars group named "folder" for key "work"
-# -> runs: code D:\learn\work
+# -> runs: code C:\Users\alex\projects
 
 ndo o D:\some\other\path
 # "D:\some\other\path" isn't a key in vars.folder, so it's used as-is
@@ -101,7 +101,7 @@ as if vars didn't exist.
 Manage entries with:
 
 ```bash
-ndo var add folder work "D:\learn\work" [--local]
+ndo var add folder work "C:\Users\alex\projects" [--local]
 ndo var remove folder work [--local]   # remove one entry
 ndo var remove folder [--local]        # remove the whole group
 ndo var list [group] [--local] [--central]
