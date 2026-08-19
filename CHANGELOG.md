@@ -7,6 +7,8 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-20
+
 ### Added
 
 - Shell tab-completion (`ndo completion bash|zsh|fish|powershell`, via
@@ -21,6 +23,14 @@ and this project follows [Semantic Versioning](https://semver.org/).
 - CI now runs `go test` on Linux, macOS, and Windows (previously
   Linux-only for the test job; other OSes were cross-compiled but never
   actually test-executed).
+
+### Fixed
+
+- A `.gitattributes` was missing, so a golden test fixture got checked
+  out with CRLF line endings on Windows CI and failed a byte-for-byte
+  comparison against program output (which always emits `\n`). Fixed by
+  marking golden fixtures `-text` and normalizing everything else to
+  `eol=lf`.
 
 ## [0.1.1] - 2026-08-18
 
@@ -79,6 +89,7 @@ and this project follows [Semantic Versioning](https://semver.org/).
   `actions/download-artifact@v8`, `actions/upload-artifact@v7`,
   `softprops/action-gh-release@v3`).
 
-[Unreleased]: https://github.com/green-threads/ndo/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/green-threads/ndo/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/green-threads/ndo/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/green-threads/ndo/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/green-threads/ndo/releases/tag/v0.1.0
