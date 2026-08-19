@@ -44,6 +44,14 @@ func NewRootCmd(version string, deps Deps) *cobra.Command {
 		// registered subcommand name, which is what makes plain recipe
 		// names like `ndo open ./file.txt` work without a `run` prefix.
 		Args: cobra.ArbitraryArgs,
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			switch cmd.Name() {
+			case "completion", "__complete", "__completeNoDesc", "help":
+				return nil
+			}
+			maybeOfferCompletionSetup(cmd.Root(), deps, cmd.ErrOrStderr())
+			return nil
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
 				return cmd.Help()
