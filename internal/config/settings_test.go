@@ -4,7 +4,7 @@ import "testing"
 
 func TestSettingsRoundTrip(t *testing.T) {
 	dir := t.TempDir()
-	want := Settings{Shell: "bash -c", Editor: "vim", Color: true}
+	want := Settings{Shell: "bash -c", Editor: "vim", Color: true, CompletionPromptAnswered: true}
 
 	if err := SaveSettings(dir, want); err != nil {
 		t.Fatalf("SaveSettings() error: %v", err)

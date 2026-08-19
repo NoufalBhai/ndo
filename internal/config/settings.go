@@ -15,6 +15,11 @@ type Settings struct {
 	Shell  string `toml:"shell,omitempty"`
 	Editor string `toml:"editor,omitempty"`
 	Color  bool   `toml:"color"`
+
+	// CompletionPromptAnswered records that the one-time "enable shell
+	// completion?" prompt has already been shown (regardless of the
+	// answer), so ndo never asks more than once per NDO_HOME.
+	CompletionPromptAnswered bool `toml:"completion_prompt_answered,omitempty"`
 }
 
 type settingsFile struct {

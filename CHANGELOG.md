@@ -7,6 +7,20 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- One-time shell completion setup: the first time `ndo` runs in a real
+  interactive terminal, it asks once whether to enable tab-completion and,
+  if yes, wires the completion script into your shell's startup file
+  itself (bash/zsh: appends a `source <(ndo completion ...)` line; fish:
+  writes to `~/.config/fish/completions/`; PowerShell: appends to
+  `$PROFILE`, resolved by asking `pwsh`/`powershell` directly rather than
+  guessing between the 5.1 and 7+ default paths). The answer is recorded
+  in `config.toml` (`completion_prompt_answered`) so it's never asked
+  again. Strictly a no-op for non-interactive stdin (scripts, CI,
+  pipes) — gated on an actual isatty check via `golang.org/x/term`, not a
+  file-mode heuristic.
+
 ## [0.2.0] - 2026-08-20
 
 ### Added

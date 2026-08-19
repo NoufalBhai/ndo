@@ -251,6 +251,13 @@ recipe's next declared param — offering the matching `vars` group's keys
 (if any) alongside normal file completion, so you never have to memorize
 what you named an entry.
 
+The first time you run `ndo` in a real terminal, it asks once whether to
+set this up for you — if you say yes, it wires the completion script into
+your shell's startup file itself, so it just works in every new terminal
+from then on. It never asks again (the answer is remembered in
+`config.toml`), and it's a strict no-op in scripts/CI/pipes. To set it up
+by hand instead:
+
 ```bash
 # bash (current shell)
 source <(ndo completion bash)
