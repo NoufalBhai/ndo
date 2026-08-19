@@ -7,6 +7,26 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- `ndo completion install` / `ndo completion uninstall` — force a
+  (re-)install or cleanly remove the completion block without going
+  through the one-time prompt.
+
+### Fixed
+
+- Windows shell detection checked `PSModulePath` before `MSYSTEM`, so Git
+  Bash launched from a PowerShell terminal (which inherits
+  `PSModulePath`) could be misdetected as PowerShell and get the
+  completion block written to `$PROFILE` instead of `.bashrc`. `MSYSTEM`
+  (and `SHELL` containing `bash`) now take priority.
+- The completion-setup prompt could fire from inside `ndo completion
+  bash`/`zsh`/etc. themselves — since those run as a real subprocess every
+  time a shell sources them, this could re-trigger the prompt on shell
+  startup for anyone who'd set up completion manually rather than through
+  the prompt. Fixed by skipping the prompt for the whole `completion`
+  command subtree, not just an exact `cmd.Name() == "completion"` match.
+
 ## [0.3.0] - 2026-08-20
 
 ### Added

@@ -45,8 +45,7 @@ func NewRootCmd(version string, deps Deps) *cobra.Command {
 		// names like `ndo open ./file.txt` work without a `run` prefix.
 		Args: cobra.ArbitraryArgs,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			switch cmd.Name() {
-			case "completion", "__complete", "__completeNoDesc", "help":
+			if cmd.Name() == "help" || cmd.Name() == "__complete" || cmd.Name() == "__completeNoDesc" || isUnderCompletionCmd(cmd) {
 				return nil
 			}
 			maybeOfferCompletionSetup(cmd.Root(), deps, cmd.ErrOrStderr())
@@ -64,6 +63,11 @@ func NewRootCmd(version string, deps Deps) *cobra.Command {
 	root.PersistentFlags().BoolVar(&flagVerbose, "verbose", false, "print extra diagnostic output, including recipe source file")
 	root.PersistentFlags().BoolVar(&flagDryRun, "dry-run", false, "print the resolved, interpolated command without executing")
 
+	// ndo provides its own "completion" command tree (with install/
+	// uninstall alongside the per-shell generators), so cobra's default
+	// one is disabled to avoid a naming collision.
+	root.CompletionOptions.DisableDefaultCmd = true
+
 	root.AddCommand(
 		newAddCmd(deps),
 		newListCmd(deps),
@@ -71,9 +75,25 @@ func NewRootCmd(version string, deps Deps) *cobra.Command {
 		newRemoveCmd(deps),
 		newInitCmd(deps),
 		newVarCmd(deps),
+		newCompletionCmd(deps),
 	)
 
 	return root
+}
+
+// isUnderCompletionCmd reports whether cmd is the "completion" command
+// itself or one of its descendants (bash/zsh/fish/powershell/install/
+// uninstall). Used to skip the one-time completion-setup prompt for
+// anything already related to completion — including a generator
+// subcommand like `ndo completion bash`, which runs as a real subprocess
+// every time a shell sources it, and must never itself trigger a prompt.
+func isUnderCompletionCmd(cmd *cobra.Command) bool {
+	for c := cmd; c != nil; c = c.Parent() {
+		if c.Name() == "completion" {
+			return true
+		}
+	}
+	return false
 }
 
 // recipeCompletionFunc drives shell tab-completion for the bare

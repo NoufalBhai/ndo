@@ -274,6 +274,14 @@ ndo completion fish | source
 ndo completion powershell | Out-String | Invoke-Expression
 ```
 
+Or skip the one-time prompt and trigger the same auto-detect-and-install
+logic directly:
+
+```bash
+ndo completion install     # detect your shell, wire it in
+ndo completion uninstall   # remove what install added
+```
+
 Run `ndo completion --help` for instructions on installing the script
 permanently for your shell.
 
