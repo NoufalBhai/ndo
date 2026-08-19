@@ -279,6 +279,8 @@ color = true
   [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 - [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) — community standards for
   this repository's issues and pull requests.
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — dev setup, coding conventions, and
+  the PR process.
 
 ## Development
 
