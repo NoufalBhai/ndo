@@ -11,7 +11,7 @@ import (
 
 // RecipeFile is the schema shared by central.toml and .ndo.toml.
 //
-// Vars are named lookup tables (e.g. vars.folder.work = "C:\Users\alex\projects")
+// Vars are named lookup tables (e.g. vars.folder.work = "C:\Users\dev\projects")
 // that recipe param binding checks by param name: if an arg matches a key
 // in the vars group named after its param, the looked-up value is
 // substituted before interpolation. See internal/cli's runRecipe.

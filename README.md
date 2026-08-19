@@ -46,7 +46,7 @@ plain TOML files.
   ceremony.
 - **Named lookup tables for arguments (`ndo var`).** Expand a short alias
   into a full value automatically — e.g. `ndo o work` → opens
-  `C:\Users\alex\projects` — without any special syntax in the recipe
+  `C:\Users\dev\projects` — without any special syntax in the recipe
   itself.
 - **Single static binary, cross-platform.** Linux, macOS, and Windows,
   amd64 and arm64. No dependency on any other task runner.
@@ -217,10 +217,10 @@ for the full mechanics and TOML schema.
 
 ```bash
 ndo add o "code {{folder}}" --param folder --local
-ndo var add folder work "C:\Users\alex\projects" --local
-ndo var add folder ndo "C:\Users\alex\projects\ndo" --local
+ndo var add folder work "C:\Users\dev\projects" --local
+ndo var add folder ndo "C:\Users\dev\projects\ndo" --local
 
-ndo o work            # -> code C:\Users\alex\projects
+ndo o work            # -> code C:\Users\dev\projects
 ndo o D:\other\path   # no match in vars.folder -> code D:\other\path (used literally)
 ```
 
@@ -235,8 +235,8 @@ ndo o D:\other\path   # no match in vars.folder -> code D:\other\path (used lite
 
 ```
 folder:
-    ndo: C:\Users\alex\projects\ndo
-    work: C:\Users\alex\projects
+    ndo: C:\Users\dev\projects\ndo
+    work: C:\Users\dev\projects
 ```
 
 Central and local vars merge **at the key level** — unlike recipes, which
