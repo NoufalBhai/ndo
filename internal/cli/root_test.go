@@ -10,6 +10,37 @@ import (
 	"github.com/green-threads/ndo/internal/recipe"
 )
 
+func TestIsUnderCompletionCmd(t *testing.T) {
+	h := newTestRoot(t)
+
+	// Regression case: cmd.Name() alone (e.g. "bash") doesn't match
+	// "completion" — the check must walk parents, or `ndo completion bash`
+	// (which runs as a real subprocess every time a shell sources it)
+	// would itself trigger the one-time completion-setup prompt.
+	completionCmd, _, err := h.cmd.Find([]string{"completion"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	bashCmd, _, err := h.cmd.Find([]string{"completion", "bash"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	addCmd, _, err := h.cmd.Find([]string{"add"})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !isUnderCompletionCmd(completionCmd) {
+		t.Error("isUnderCompletionCmd(completion) = false, want true")
+	}
+	if !isUnderCompletionCmd(bashCmd) {
+		t.Error("isUnderCompletionCmd(completion bash) = false, want true")
+	}
+	if isUnderCompletionCmd(addCmd) {
+		t.Error("isUnderCompletionCmd(add) = true, want false")
+	}
+}
+
 func TestCompletionOffersRecipeNamesAtFirstPosition(t *testing.T) {
 	h := newTestRoot(t)
 	central := config.RecipeFile{Recipes: map[string]recipe.Recipe{
