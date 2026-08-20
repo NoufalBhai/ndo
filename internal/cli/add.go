@@ -12,6 +12,7 @@ import (
 
 func newAddCmd(deps Deps) *cobra.Command {
 	var params []string
+	var dependsOn []string
 	var local bool
 	var description string
 
@@ -20,18 +21,19 @@ func newAddCmd(deps Deps) *cobra.Command {
 		Short: "Add a new recipe",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runAdd(deps, cmd.OutOrStdout(), args[0], args[1], params, description, local)
+			return runAdd(deps, cmd.OutOrStdout(), args[0], args[1], params, dependsOn, description, local)
 		},
 	}
 
 	cmd.Flags().StringArrayVar(&params, "param", nil, "declared parameter name, in positional order (repeatable)")
+	cmd.Flags().StringArrayVar(&dependsOn, "depends", nil, "recipe to run first, in order (repeatable); see docs/recipe-format.md#dependencies")
 	cmd.Flags().BoolVar(&local, "local", false, "write to the nearest local .ndo.toml instead of the central file")
 	cmd.Flags().StringVar(&description, "desc", "", "recipe description, shown in `ndo list`")
 
 	return cmd
 }
 
-func runAdd(deps Deps, stdout io.Writer, name, command string, params []string, description string, local bool) error {
+func runAdd(deps Deps, stdout io.Writer, name, command string, params, dependsOn []string, description string, local bool) error {
 	targetPath, err := targetFilePath(deps, local)
 	if err != nil {
 		return err
@@ -51,6 +53,7 @@ func runAdd(deps Deps, stdout io.Writer, name, command string, params []string, 
 	rf.Recipes[name] = recipe.Recipe{
 		Command:     command,
 		Params:      params,
+		Depends:     dependsOn,
 		Description: description,
 	}
 

@@ -68,7 +68,16 @@ string.
 
 ## Dependencies
 
-`depends` names other recipes to run first:
+`depends` names other recipes to run first. Set it via `ndo add --depends
+<name>` (repeatable, in order):
+
+```bash
+ndo add build "go build ./..." --local
+ndo add lint "go vet ./..." --local
+ndo add deploy "./scripts/deploy.sh {{env}}" --param env --depends build --depends lint --local
+```
+
+— or by hand-editing the recipe file directly (`ndo edit`):
 
 ```toml
 [recipes.deploy]

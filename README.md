@@ -171,7 +171,7 @@ ndo test -- -run TestFoo
 ### `ndo add`
 
 ```
-ndo add <name> "<command>" [--param <name>]... [--local] [--desc "<text>"]
+ndo add <name> "<command>" [--param <name>]... [--depends <name>]... [--local] [--desc "<text>"]
 ```
 
 Adds a new recipe. Fails with an error (not a silent overwrite) if the
@@ -180,11 +180,15 @@ existing recipe by hand.
 
 ```bash
 ndo add deploy "./scripts/deploy.sh {{env}}" --param env --local --desc "Deploy to the given environment"
+
+# build/lint run first, in order, every time deploy does
+ndo add deploy "./scripts/deploy.sh {{env}}" --param env --depends build --depends lint --local
 ```
 
 | Flag | Effect |
 |---|---|
 | `--param <name>` | Declares a parameter, in positional order. Repeatable. |
+| `--depends <name>` | Recipe to run first, in order. Repeatable. See [Dependencies](docs/recipe-format.md#dependencies). |
 | `--local` | Write to the nearest local `.ndo.toml` (creating one in the current directory if none is found upward) instead of the central file. |
 | `--desc "<text>"` | Description shown in `ndo list`. |
 
