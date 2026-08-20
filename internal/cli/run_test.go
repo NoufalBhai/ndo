@@ -152,6 +152,102 @@ func TestRunFallsBackToLiteralWhenNoVarsMatch(t *testing.T) {
 	}
 }
 
+func TestRunExecutesDependenciesBeforeRecipe(t *testing.T) {
+	h := newTestRoot(t)
+	central := config.RecipeFile{Recipes: map[string]recipe.Recipe{
+		"deploy": {Command: "echo deploy", Depends: []string{"build"}},
+		"build":  {Command: "echo build"},
+	}}
+	if err := config.SaveRecipeFile(centralFilePathForTest(h), central); err != nil {
+		t.Fatal(err)
+	}
+
+	root := NewRootCmd("test", h.deps)
+	var out bytes.Buffer
+	root.SetOut(&out)
+	root.SetArgs([]string{"deploy"})
+	if err := root.Execute(); err != nil {
+		t.Fatalf("run failed: %v", err)
+	}
+	want := "build\ndeploy\n"
+	if got := strings.ReplaceAll(out.String(), "\r\n", "\n"); got != want {
+		t.Fatalf("stdout = %q, want %q", got, want)
+	}
+}
+
+func TestRunDryRunPrintsWholeDependencyChain(t *testing.T) {
+	h := newTestRoot(t)
+	central := config.RecipeFile{Recipes: map[string]recipe.Recipe{
+		"deploy": {Command: "echo deploy", Depends: []string{"build"}},
+		"build":  {Command: "echo build"},
+	}}
+	if err := config.SaveRecipeFile(centralFilePathForTest(h), central); err != nil {
+		t.Fatal(err)
+	}
+
+	root := NewRootCmd("test", h.deps)
+	var out bytes.Buffer
+	root.SetOut(&out)
+	root.SetArgs([]string{"--dry-run", "deploy"})
+	if err := root.Execute(); err != nil {
+		t.Fatalf("run failed: %v", err)
+	}
+	want := "echo build\necho deploy\n"
+	if got := out.String(); got != want {
+		t.Fatalf("dry-run stdout = %q, want %q", got, want)
+	}
+}
+
+func TestRunStopsChainOnDependencyFailure(t *testing.T) {
+	h := newTestRoot(t)
+	central := config.RecipeFile{Recipes: map[string]recipe.Recipe{
+		"deploy": {Command: "echo deploy", Depends: []string{"build"}},
+		"build":  {Command: "exit 3"},
+	}}
+	if err := config.SaveRecipeFile(centralFilePathForTest(h), central); err != nil {
+		t.Fatal(err)
+	}
+
+	root := NewRootCmd("test", h.deps)
+	var out bytes.Buffer
+	root.SetOut(&out)
+	root.SetArgs([]string{"deploy"})
+	err := root.Execute()
+
+	var exitErr *ExitError
+	if !errors.As(err, &exitErr) {
+		t.Fatalf("error = %v, want *ExitError", err)
+	}
+	if exitErr.Code != 3 {
+		t.Fatalf("exit code = %d, want 3", exitErr.Code)
+	}
+	if got := out.String(); got != "" {
+		t.Fatalf("stdout = %q, want empty — deploy should never run after build fails", got)
+	}
+}
+
+func TestRunDependencyGraphErrorSurfacesBeforeAnyExecution(t *testing.T) {
+	h := newTestRoot(t)
+	central := config.RecipeFile{Recipes: map[string]recipe.Recipe{
+		"deploy": {Command: "echo deploy", Depends: []string{"missing"}},
+	}}
+	if err := config.SaveRecipeFile(centralFilePathForTest(h), central); err != nil {
+		t.Fatal(err)
+	}
+
+	root := NewRootCmd("test", h.deps)
+	var out bytes.Buffer
+	root.SetOut(&out)
+	root.SetArgs([]string{"deploy"})
+	err := root.Execute()
+	if err == nil || !strings.Contains(err.Error(), "does not exist") {
+		t.Fatalf("error = %v, want mention of the missing dependency", err)
+	}
+	if got := out.String(); got != "" {
+		t.Fatalf("stdout = %q, want empty — nothing should run", got)
+	}
+}
+
 func centralFilePathForTest(h *rootHarness) string {
 	return centralFilePath(h.deps.NDOHome)
 }

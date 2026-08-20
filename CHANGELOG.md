@@ -7,6 +7,17 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- `depends` on a recipe now runs — other recipes to run first, in order,
+  resolved transitively (a dependency's own `depends` also runs) and
+  deduped so a shared dependency runs once per invocation even when
+  reached through multiple paths. Dependency cycles and dependencies with
+  required params (which could never receive arguments) are hard errors,
+  caught before anything runs. Fail-fast: the first non-zero exit in the
+  chain stops everything after it. `--dry-run` and `--verbose` cover the
+  whole chain, not just the recipe you invoked.
+
 ## [0.4.1] - 2026-08-21
 
 ### Fixed

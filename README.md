@@ -142,6 +142,7 @@ Recipes added *without* `--local` go into the central file
 | **Central file** | `~/.ndo/central.toml` (or `$NDO_HOME/central.toml`) — recipes available everywhere. |
 | **Local file** | `.ndo.toml`, found by searching upward from the current directory (git-style). Project-specific recipes. |
 | **Vars** | Named lookup tables (`[vars.<group>]`) that expand a positional argument into a longer value, keyed by param name. |
+| **Dependencies** | `depends = [...]` on a recipe — other recipes that run first, in order, deduped across the whole chain. See [`docs/recipe-format.md`](docs/recipe-format.md#dependencies). |
 | **Settings** | `~/.ndo/config.toml` — app behavior (shell, editor, color), never recipes. |
 
 ## Command reference
@@ -151,7 +152,10 @@ Recipes added *without* `--local` go into the central file
 The default invocation. Resolves `name` against the merged central+local
 recipe set, binds `args` positionally to the recipe's declared `params`
 (checking [`ndo var`](#ndo-var) lookup tables along the way), and executes
-the result.
+the result. If the recipe has `depends`, those run first, in order, each
+recipe running at most once even across a shared dependency — see
+[`docs/recipe-format.md`](docs/recipe-format.md#dependencies) for the full
+rules (cycles, fail-fast, `--dry-run`/`--verbose` behavior).
 
 ```bash
 ndo open ./file.txt

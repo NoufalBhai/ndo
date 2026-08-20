@@ -19,46 +19,62 @@ func (e *ExitError) Error() string {
 }
 
 // runRecipe resolves name against the merged central+local recipe set,
-// binds args positionally, and executes the result — or just prints it if
-// --dry-run was passed.
+// resolves its dependency chain (name's depends, deduped and topologically
+// ordered, per internal/recipe.ResolveDependencies), and runs each recipe
+// in order — binding CLI args only against the top-level recipe, since
+// dependencies never receive arguments. Stops at the first non-zero exit
+// or error rather than running the rest of the chain. If --dry-run was
+// passed, prints every resolved command in the chain instead of running
+// any of them.
 func runRecipe(deps Deps, stdout, stderr io.Writer, name string, args []string) error {
 	res, err := loadResolved(deps)
 	if err != nil {
 		return err
 	}
 
-	r, ok := res.Merged.Recipes[name]
-	if !ok {
+	if _, ok := res.Merged.Recipes[name]; !ok {
 		return fmt.Errorf("no such recipe: %s (see `ndo list`)", name)
 	}
 
-	args = resolveVars(res.Merged.Vars, r.Params, args)
-
-	command, err := r.Bind(args)
+	order, err := recipe.ResolveDependencies(res.Merged.Recipes, name)
 	if err != nil {
-		return fmt.Errorf("recipe %s: %w", name, err)
+		return err
 	}
 
-	if flagVerbose {
-		source := "central"
-		if _, isLocal := res.Local.Recipes[name]; isLocal {
-			source = res.LocalPath
+	for _, n := range order {
+		r := res.Merged.Recipes[n]
+
+		var recipeArgs []string
+		if n == name {
+			recipeArgs = resolveVars(res.Merged.Vars, r.Params, args)
 		}
-		fmt.Fprintf(stderr, "# %s (from %s)\n", name, source)
-	}
 
-	if flagDryRun {
-		fmt.Fprintln(stdout, command)
-		return nil
-	}
+		command, err := r.Bind(recipeArgs)
+		if err != nil {
+			return fmt.Errorf("recipe %s: %w", n, err)
+		}
 
-	shell := recipe.DefaultShell()
-	code, err := recipe.Execute(shell, command, deps.Stdin, stdout, stderr)
-	if err != nil {
-		return fmt.Errorf("running recipe %s: %w", name, err)
-	}
-	if code != 0 {
-		return &ExitError{Code: code}
+		if flagVerbose {
+			source := "central"
+			if _, isLocal := res.Local.Recipes[n]; isLocal {
+				source = res.LocalPath
+			}
+			fmt.Fprintf(stderr, "# %s (from %s)\n", n, source)
+		}
+
+		if flagDryRun {
+			fmt.Fprintln(stdout, command)
+			continue
+		}
+
+		shell := recipe.DefaultShell()
+		code, err := recipe.Execute(shell, command, deps.Stdin, stdout, stderr)
+		if err != nil {
+			return fmt.Errorf("running recipe %s: %w", n, err)
+		}
+		if code != 0 {
+			return &ExitError{Code: code}
+		}
 	}
 	return nil
 }
