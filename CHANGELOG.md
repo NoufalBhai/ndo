@@ -7,6 +7,8 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-08-21
+
 ### Fixed
 
 - `DetectChannel`'s Scoop/Homebrew/`GOBIN`/`GOPATH` path matching used
@@ -159,7 +161,8 @@ and this project follows [Semantic Versioning](https://semver.org/).
   `actions/download-artifact@v8`, `actions/upload-artifact@v7`,
   `softprops/action-gh-release@v3`).
 
-[Unreleased]: https://github.com/green-threads/ndo/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/green-threads/ndo/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/green-threads/ndo/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/green-threads/ndo/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/green-threads/ndo/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/green-threads/ndo/compare/v0.2.0...v0.3.0
