@@ -42,6 +42,16 @@ const (
 	GoInstall
 )
 
+// toSlash normalizes path separators to "/" regardless of the OS this
+// process is actually running on — unlike filepath.ToSlash, which only
+// converts filepath.Separator for the *host* OS, and so is a no-op for
+// backslash-separated Windows-style paths when running on Linux/macOS
+// (as happens here: DetectChannel takes an explicit goos so its tests can
+// exercise Windows-shaped paths from any CI runner).
+func toSlash(p string) string {
+	return strings.ReplaceAll(p, `\`, "/")
+}
+
 // DetectChannel guesses the install channel from the running executable's
 // path and a snapshot of the environment, using the layout each real
 // install path leaves behind: Homebrew's Cellar, Scoop's apps directory,
@@ -49,7 +59,7 @@ const (
 // GOBIN/GOPATH. Kept pure — no direct env/OS reads — so it's unit tested
 // without touching the real filesystem or environment.
 func DetectChannel(execPath, goos string, env map[string]string) Channel {
-	lower := strings.ToLower(filepath.ToSlash(execPath))
+	lower := strings.ToLower(toSlash(execPath))
 
 	if strings.Contains(lower, "/cellar/") || strings.Contains(lower, "linuxbrew") {
 		return Homebrew
@@ -59,12 +69,12 @@ func DetectChannel(execPath, goos string, env map[string]string) Channel {
 	}
 
 	if goBin := env["GOBIN"]; goBin != "" {
-		if strings.HasPrefix(lower, strings.ToLower(filepath.ToSlash(goBin))) {
+		if strings.HasPrefix(lower, strings.ToLower(toSlash(goBin))) {
 			return GoInstall
 		}
 	}
 	if goPath := env["GOPATH"]; goPath != "" {
-		if strings.HasPrefix(lower, strings.ToLower(filepath.ToSlash(goPath))+"/bin") {
+		if strings.HasPrefix(lower, strings.ToLower(toSlash(goPath))+"/bin") {
 			return GoInstall
 		}
 	}

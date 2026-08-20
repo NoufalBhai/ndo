@@ -7,6 +7,18 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `DetectChannel`'s Scoop/Homebrew/`GOBIN`/`GOPATH` path matching used
+  `filepath.ToSlash`, which only normalizes separators for the *host* OS
+  running the process — a no-op for backslash-separated Windows-style
+  paths when running on Linux/macOS. Since `DetectChannel` takes an
+  explicit `goos` precisely so its tests can exercise Windows-shaped paths
+  from any CI runner, this broke `TestDetectChannel/scoop` on Linux CI
+  (real-world behavior was unaffected, since production always calls it
+  with `goos` matching the actual host). Fixed with an OS-independent
+  `toSlash` helper.
+
 ## [0.4.0] - 2026-08-21
 
 ### Added
