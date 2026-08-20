@@ -7,6 +7,24 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- `ndo update` — checks the latest GitHub release against the running
+  version. For Homebrew/Scoop/`.deb`/`.rpm`/`go install` installs
+  (detected from the running binary's path), prints the right upgrade
+  command instead of touching the binary, so that package manager's
+  records don't go stale. For a plain binary install (`install.sh` or a
+  manual download), downloads the new release, verifies its checksum
+  against `checksums.txt`, and atomically replaces the running binary.
+  `--check` only reports what's available without installing it.
+- `install/install.ps1` and `install/install.cmd` — one-line install for
+  Windows (PowerShell and cmd.exe), mirroring `install/install.sh`.
+
+### Changed
+
+- Install scripts moved into `install/` (`install.sh`, `install.ps1`,
+  `install.cmd`) instead of living at the repo root.
+
 ## [0.3.1] - 2026-08-20
 
 ### Added

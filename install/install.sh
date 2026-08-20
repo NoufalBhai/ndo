@@ -1,7 +1,7 @@
 #!/bin/sh
 # Installs the latest ndo release for Linux or macOS.
 #
-#   curl -fsSL https://raw.githubusercontent.com/green-threads/ndo/main/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/green-threads/ndo/main/install/install.sh | sh
 #
 # Override the install directory with NDO_INSTALL_DIR (default: /usr/local/bin,
 # falling back to ~/.local/bin if that isn't writable).

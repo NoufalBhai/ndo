@@ -76,6 +76,7 @@ func NewRootCmd(version string, deps Deps) *cobra.Command {
 		newInitCmd(deps),
 		newVarCmd(deps),
 		newCompletionCmd(deps),
+		newUpdateCmd(deps),
 	)
 
 	return root

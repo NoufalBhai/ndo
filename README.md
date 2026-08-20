@@ -23,6 +23,7 @@ plain TOML files.
   - [`ndo remove`](#ndo-remove)
   - [`ndo init`](#ndo-init)
   - [`ndo var`](#ndo-var)
+  - [`ndo update`](#ndo-update)
   - [Shell completion](#shell-completion)
   - [Global flags](#global-flags)
 - [Configuration](#configuration)
@@ -80,11 +81,24 @@ sudo rpm -i ndo_<version>_<arch>.rpm            # Fedora/RHEL
 **macOS / Linux — one-line install script:**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/green-threads/ndo/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/green-threads/ndo/main/install/install.sh | sh
 ```
 
 Downloads the right binary for your OS/arch and installs it to
 `/usr/local/bin` (or `~/.local/bin` if that isn't writable).
+
+**Windows — one-line install script:**
+
+```powershell
+irm https://raw.githubusercontent.com/green-threads/ndo/main/install/install.ps1 | iex
+```
+
+Or, from `cmd.exe`, download
+[`install.cmd`](install/install.cmd) and double-click it (or run it
+directly) — it's a thin wrapper around the same PowerShell script for
+people who'd rather not type a PowerShell one-liner. Both install to
+`%LOCALAPPDATA%\Programs\ndo` by default (override with
+`$env:NDO_INSTALL_DIR` / `NDO_INSTALL_DIR`).
 
 **Go toolchain:**
 
@@ -243,6 +257,25 @@ folder:
 Central and local vars merge **at the key level** — unlike recipes, which
 replace wholesale on a name collision. A local `.ndo.toml` can add or
 override individual keys without losing the rest of the central group.
+
+### `ndo update`
+
+```
+ndo update [--check]
+```
+
+Checks the latest GitHub release against the running version. What
+happens next depends on how `ndo` was installed, detected from the
+running binary's path:
+
+| Detected as | Behavior |
+|---|---|
+| Homebrew, Scoop, a `.deb`/`.rpm` install, or `go install` | Prints the right command for that channel (`brew upgrade ndo`, etc.) — never touches the binary, so that package manager's own records stay accurate. |
+| Anything else (raw binary via `install.sh` or a manual download) | Downloads the new release, verifies its checksum against `checksums.txt`, and atomically replaces the running binary in place. |
+
+`--check` only reports whether an update is available (and the right
+command to get it) without installing anything, regardless of which
+channel is detected.
 
 ### Shell completion
 
