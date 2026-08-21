@@ -7,6 +7,13 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-08-22
+
+First stable release. The recipe/vars TOML schema and CLI surface
+(`add`, `list`, `edit`, `remove`, `init`, `var`, `update`, `completion`,
+and bare `ndo <name> [args...]`) are the compatibility baseline going
+forward — see [Versioning](README.md#versioning).
+
 ### Added
 
 - `depends` on a recipe now runs — other recipes to run first, in order,
@@ -190,7 +197,8 @@ and this project follows [Semantic Versioning](https://semver.org/).
   `actions/download-artifact@v8`, `actions/upload-artifact@v7`,
   `softprops/action-gh-release@v3`).
 
-[Unreleased]: https://github.com/green-threads/ndo/compare/v0.4.2...HEAD
+[Unreleased]: https://github.com/green-threads/ndo/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/green-threads/ndo/compare/v0.4.2...v1.0.0
 [0.4.2]: https://github.com/green-threads/ndo/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/green-threads/ndo/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/green-threads/ndo/compare/v0.3.1...v0.4.0
