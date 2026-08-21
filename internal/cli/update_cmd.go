@@ -51,8 +51,12 @@ func runUpdate(currentVersion string, out io.Writer, checkOnly bool) error {
 
 	current := strings.TrimPrefix(currentVersion, "v")
 	latest := strings.TrimPrefix(latestTag, "v")
-	if current == latest {
+	switch update.CompareVersions(current, latest) {
+	case 0:
 		fmt.Fprintf(out, "Already on the latest version (%s).\n", currentVersion)
+		return nil
+	case 1:
+		fmt.Fprintf(out, "Running %s, which is ahead of the latest published release (%s) — nothing to do.\n", currentVersion, latestTag)
 		return nil
 	}
 	fmt.Fprintf(out, "A newer version is available: %s -> %s\n", currentVersion, latestTag)

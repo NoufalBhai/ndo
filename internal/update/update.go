@@ -17,6 +17,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -52,6 +53,14 @@ func toSlash(p string) string {
 	return strings.ReplaceAll(p, `\`, "/")
 }
 
+// hasPathPrefix reports whether path is dir itself or is inside it —
+// unlike a plain strings.HasPrefix(path, dir), which would false-positive
+// match a sibling like "/home/user/go-experimental/bin/ndo" against
+// dir "/home/user/go".
+func hasPathPrefix(path, dir string) bool {
+	return path == dir || strings.HasPrefix(path, dir+"/")
+}
+
 // DetectChannel guesses the install channel from the running executable's
 // path and a snapshot of the environment, using the layout each real
 // install path leaves behind: Homebrew's Cellar, Scoop's apps directory,
@@ -69,12 +78,12 @@ func DetectChannel(execPath, goos string, env map[string]string) Channel {
 	}
 
 	if goBin := env["GOBIN"]; goBin != "" {
-		if strings.HasPrefix(lower, strings.ToLower(toSlash(goBin))) {
+		if hasPathPrefix(lower, strings.ToLower(toSlash(goBin))) {
 			return GoInstall
 		}
 	}
 	if goPath := env["GOPATH"]; goPath != "" {
-		if strings.HasPrefix(lower, strings.ToLower(toSlash(goPath))+"/bin") {
+		if hasPathPrefix(lower, strings.ToLower(toSlash(goPath))+"/bin") {
 			return GoInstall
 		}
 	}
@@ -106,6 +115,37 @@ func InstructionFor(ch Channel) (instruction string, selfReplace bool) {
 	default:
 		return "", true
 	}
+}
+
+// CompareVersions compares two "v"-stripped MAJOR.MINOR.PATCH-style
+// version strings numerically, segment by segment (so "1.9.0" < "1.10.0",
+// unlike a plain string/lexical compare), returning -1, 0, or 1. Missing
+// or non-numeric segments compare as 0. This is intentionally not a full
+// SemVer implementation (no pre-release/build-metadata precedence) — it
+// only needs to handle ndo's own plain release tags.
+func CompareVersions(a, b string) int {
+	as := strings.Split(a, ".")
+	bs := strings.Split(b, ".")
+	n := len(as)
+	if len(bs) > n {
+		n = len(bs)
+	}
+	for i := 0; i < n; i++ {
+		var av, bv int
+		if i < len(as) {
+			av, _ = strconv.Atoi(as[i])
+		}
+		if i < len(bs) {
+			bv, _ = strconv.Atoi(bs[i])
+		}
+		if av != bv {
+			if av < bv {
+				return -1
+			}
+			return 1
+		}
+	}
+	return 0
 }
 
 type releaseInfo struct {

@@ -29,6 +29,16 @@ func TestDetectChannel(t *testing.T) {
 		{"scoop", `C:\Users\alex\scoop\apps\ndo\current\ndo.exe`, "windows", nil, Scoop},
 		{"go install via GOBIN", "/home/alex/gobin/ndo", "linux", map[string]string{"GOBIN": "/home/alex/gobin"}, GoInstall},
 		{"go install via GOPATH", "/home/alex/go/bin/ndo", "linux", map[string]string{"GOPATH": "/home/alex/go"}, GoInstall},
+		{"GOBIN exact match, no trailing separator", "/home/alex/gobin", "linux", map[string]string{"GOBIN": "/home/alex/gobin"}, GoInstall},
+		{
+			// Regression case: a plain string prefix match (without a
+			// directory-boundary check) would wrongly treat a sibling
+			// directory that merely starts with the same characters as
+			// GOPATH's bin dir as a go-install location.
+			name: "sibling directory sharing GOPATH's prefix is not GoInstall",
+			path: "/home/alex/go-experimental/bin/ndo", goos: "linux",
+			env: map[string]string{"GOPATH": "/home/alex/go"}, want: Unknown,
+		},
 		{"deb/rpm bindir", "/usr/bin/ndo", "linux", nil, SystemPackage},
 		{"install.sh default location", "/usr/local/bin/ndo", "linux", nil, Unknown},
 		{"install.sh fallback location", "/home/alex/.local/bin/ndo", "linux", nil, Unknown},
@@ -39,6 +49,31 @@ func TestDetectChannel(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := DetectChannel(tt.path, tt.goos, tt.env); got != tt.want {
 				t.Fatalf("DetectChannel(%q, %q, %v) = %v, want %v", tt.path, tt.goos, tt.env, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestCompareVersions(t *testing.T) {
+	tests := []struct {
+		a, b string
+		want int
+	}{
+		{"1.0.0", "1.0.0", 0},
+		{"1.0.0", "1.0.1", -1},
+		{"1.0.1", "1.0.0", 1},
+		// Regression case: a plain string/lexical compare would put "1.9.0"
+		// after "1.10.0" (since '9' > '1' lexically), wrongly reporting an
+		// already-latest v1.10.0 install as behind v1.9.0.
+		{"1.9.0", "1.10.0", -1},
+		{"1.10.0", "1.9.0", 1},
+		{"2.0.0", "1.99.99", 1},
+		{"1.0", "1.0.0", 0},
+	}
+	for _, tt := range tests {
+		t.Run(tt.a+"_vs_"+tt.b, func(t *testing.T) {
+			if got := CompareVersions(tt.a, tt.b); got != tt.want {
+				t.Fatalf("CompareVersions(%q, %q) = %d, want %d", tt.a, tt.b, got, tt.want)
 			}
 		})
 	}

@@ -7,6 +7,37 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-08-22
+
+### Fixed
+
+- `ndo add <name>` now rejects a name that matches one of ndo's own
+  built-in commands (`list`, `edit`, `remove`, `init`, `var`,
+  `completion`, `update`, `add`) — such a recipe could be saved but never
+  actually run, since `ndo <name>` always dispatches to the built-in
+  command of that name first.
+- `{{param |raw}}` / `{{param| raw}}` (whitespace around the pipe) failed
+  to match the interpolation pattern at all and were silently left as
+  literal text in the executed command, instead of interpolating or
+  erroring. Whitespace around `|raw` is now tolerated the same way it
+  already was inside `{{` and `}}`.
+- `ndo update` compared versions with plain string equality instead of
+  numeric comparison, so it could describe a version that's actually
+  *behind* the running binary as "newer" and self-replace with it. Also
+  affected: `"1.9.0"` sorted after `"1.10.0"` under a lexical compare.
+  Fixed with a numeric MAJOR.MINOR.PATCH comparison.
+- `DetectChannel`'s `GOBIN`/`GOPATH` match used a plain string prefix
+  check with no directory-boundary check, so a sibling directory whose
+  name merely started with the same characters (e.g. `GOPATH=~/go`
+  against a binary under `~/go-experimental/bin/`) could be misdetected
+  as a `go install` install.
+- `ndo edit` split `$EDITOR`/`config.toml`'s `editor` on whitespace with
+  no quoting support, breaking an editor path containing spaces (e.g. on
+  Windows). A whitespace-only editor value also silently ended up trying
+  to execute the target recipe file itself. Fixed with a small
+  quote-aware tokenizer that also rejects an empty/whitespace-only or
+  unterminated-quote editor command up front.
+
 ## [1.0.0] - 2026-08-22
 
 First stable release. The recipe/vars TOML schema and CLI surface
@@ -197,7 +228,8 @@ forward — see [Versioning](README.md#versioning).
   `actions/download-artifact@v8`, `actions/upload-artifact@v7`,
   `softprops/action-gh-release@v3`).
 
-[Unreleased]: https://github.com/green-threads/ndo/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/green-threads/ndo/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/green-threads/ndo/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/green-threads/ndo/compare/v0.4.2...v1.0.0
 [0.4.2]: https://github.com/green-threads/ndo/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/green-threads/ndo/compare/v0.4.0...v0.4.1

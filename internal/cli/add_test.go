@@ -71,6 +71,31 @@ func TestAddDuplicateInTargetFileErrors(t *testing.T) {
 	}
 }
 
+func TestAddRejectsBuiltinCommandName(t *testing.T) {
+	for _, name := range []string{"list", "add", "edit", "remove", "init", "var", "completion", "update"} {
+		t.Run(name, func(t *testing.T) {
+			h := newTestRoot(t, "add", name, "echo hi", "--local")
+			err := h.Execute()
+			if err == nil {
+				t.Fatalf("expected error adding a recipe named %q, got nil", name)
+			}
+			if !strings.Contains(err.Error(), "built-in ndo command") {
+				t.Fatalf("error = %v, want mention of 'built-in ndo command'", err)
+			}
+
+			path, ok := config.SearchUpward(h.deps.Cwd, config.LocalFileName())
+			if ok {
+				rf, loadErr := config.LoadRecipeFile(path)
+				if loadErr == nil {
+					if _, exists := rf.Recipes[name]; exists {
+						t.Fatalf("recipe %q was written despite the error", name)
+					}
+				}
+			}
+		})
+	}
+}
+
 func TestAddDefaultsToCentral(t *testing.T) {
 	h := newTestRoot(t, "add", "hello", "echo hi")
 	if err := h.Execute(); err != nil {

@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/green-threads/ndo/internal/config"
@@ -60,5 +61,43 @@ func TestResolveEditorErrorsIfNoneConfigured(t *testing.T) {
 	t.Setenv("EDITOR", "")
 	if _, err := resolveEditor(ndoHome); err == nil {
 		t.Fatal("expected error when no editor is configured")
+	}
+}
+
+func TestSplitCommand(t *testing.T) {
+	tests := []struct {
+		name    string
+		in      string
+		want    []string
+		wantErr bool
+	}{
+		{name: "simple", in: "vim", want: []string{"vim"}},
+		{name: "with args", in: "code --wait", want: []string{"code", "--wait"}},
+		{
+			name: "quoted path with spaces",
+			in:   `"C:\Program Files\Editor\editor.exe" --wait`,
+			want: []string{`C:\Program Files\Editor\editor.exe`, "--wait"},
+		},
+		{name: "empty", in: "", wantErr: true},
+		{name: "whitespace only", in: "   ", wantErr: true},
+		{name: "unterminated quote", in: `"C:\no closing quote`, wantErr: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := splitCommand(tt.in)
+			if tt.wantErr {
+				if err == nil {
+					t.Fatalf("splitCommand(%q) = %v, want an error", tt.in, got)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("splitCommand(%q) unexpected error: %v", tt.in, err)
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Fatalf("splitCommand(%q) = %v, want %v", tt.in, got, tt.want)
+			}
+		})
 	}
 }

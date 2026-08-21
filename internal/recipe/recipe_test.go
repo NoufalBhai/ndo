@@ -43,6 +43,22 @@ func TestRecipeBind(t *testing.T) {
 			want:   func() string { return "echo hello world" },
 		},
 		{
+			// Regression case: whitespace was tolerated right inside "{{"
+			// and "}}" but not around "|raw" itself, so this token failed
+			// to match the pattern at all and was silently left as literal
+			// text in the command instead of erroring or interpolating.
+			name:   "raw escape hatch tolerates whitespace around the pipe",
+			recipe: Recipe{Command: "echo {{msg |raw}}", Params: []string{"msg"}},
+			args:   []string{"hello world"},
+			want:   func() string { return "echo hello world" },
+		},
+		{
+			name:   "raw escape hatch tolerates whitespace after the pipe",
+			recipe: Recipe{Command: "echo {{msg| raw}}", Params: []string{"msg"}},
+			args:   []string{"hello world"},
+			want:   func() string { return "echo hello world" },
+		},
+		{
 			name:   "empty params recipe with no args",
 			recipe: Recipe{Command: "go test ./...", Params: []string{}},
 			args:   []string{},
