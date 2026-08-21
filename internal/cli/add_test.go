@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 
@@ -27,6 +28,29 @@ func TestAddCreatesLocalRecipe(t *testing.T) {
 	}
 	if r.Command != "echo {{name}}" || len(r.Params) != 1 || r.Params[0] != "name" {
 		t.Fatalf("unexpected recipe: %+v", r)
+	}
+}
+
+func TestAddWithDependsFlagRepeatable(t *testing.T) {
+	h := newTestRoot(t, "add", "deploy", "./deploy.sh", "--depends", "build", "--depends", "lint", "--local")
+	if err := h.Execute(); err != nil {
+		t.Fatalf("add failed: %v", err)
+	}
+
+	path, ok := config.SearchUpward(h.deps.Cwd, config.LocalFileName())
+	if !ok {
+		t.Fatalf("expected local file to be created")
+	}
+	rf, err := config.LoadRecipeFile(path)
+	if err != nil {
+		t.Fatalf("LoadRecipeFile: %v", err)
+	}
+	r, ok := rf.Recipes["deploy"]
+	if !ok {
+		t.Fatalf("expected recipe %q to exist", "deploy")
+	}
+	if want := []string{"build", "lint"}; !reflect.DeepEqual(r.Depends, want) {
+		t.Fatalf("Depends = %v, want %v", r.Depends, want)
 	}
 }
 

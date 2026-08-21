@@ -8,8 +8,10 @@ import (
 
 // Recipe is a named, shell-executable command with optional parameters.
 //
-// Depends is parsed so the TOML schema round-trips forward-compatibly, but
-// v1 does not act on it (see DESIGN.md roadmap v1.1).
+// Depends names other recipes to run first — see ResolveDependencies in
+// deps.go for ordering, dedup, and cycle-detection rules. Recipes used
+// purely as dependencies (never invoked directly) can't declare required
+// Params, since dependencies never receive CLI arguments.
 type Recipe struct {
 	Command     string   `toml:"command"`
 	Params      []string `toml:"params,omitempty"`

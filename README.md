@@ -142,6 +142,7 @@ Recipes added *without* `--local` go into the central file
 | **Central file** | `~/.ndo/central.toml` (or `$NDO_HOME/central.toml`) — recipes available everywhere. |
 | **Local file** | `.ndo.toml`, found by searching upward from the current directory (git-style). Project-specific recipes. |
 | **Vars** | Named lookup tables (`[vars.<group>]`) that expand a positional argument into a longer value, keyed by param name. |
+| **Dependencies** | `depends = [...]` on a recipe — other recipes that run first, in order, deduped across the whole chain. See [`docs/recipe-format.md`](docs/recipe-format.md#dependencies). |
 | **Settings** | `~/.ndo/config.toml` — app behavior (shell, editor, color), never recipes. |
 
 ## Command reference
@@ -151,7 +152,10 @@ Recipes added *without* `--local` go into the central file
 The default invocation. Resolves `name` against the merged central+local
 recipe set, binds `args` positionally to the recipe's declared `params`
 (checking [`ndo var`](#ndo-var) lookup tables along the way), and executes
-the result.
+the result. If the recipe has `depends`, those run first, in order, each
+recipe running at most once even across a shared dependency — see
+[`docs/recipe-format.md`](docs/recipe-format.md#dependencies) for the full
+rules (cycles, fail-fast, `--dry-run`/`--verbose` behavior).
 
 ```bash
 ndo open ./file.txt
@@ -167,7 +171,7 @@ ndo test -- -run TestFoo
 ### `ndo add`
 
 ```
-ndo add <name> "<command>" [--param <name>]... [--local] [--desc "<text>"]
+ndo add <name> "<command>" [--param <name>]... [--depends <name>]... [--local] [--desc "<text>"]
 ```
 
 Adds a new recipe. Fails with an error (not a silent overwrite) if the
@@ -176,11 +180,15 @@ existing recipe by hand.
 
 ```bash
 ndo add deploy "./scripts/deploy.sh {{env}}" --param env --local --desc "Deploy to the given environment"
+
+# build/lint run first, in order, every time deploy does
+ndo add deploy "./scripts/deploy.sh {{env}}" --param env --depends build --depends lint --local
 ```
 
 | Flag | Effect |
 |---|---|
 | `--param <name>` | Declares a parameter, in positional order. Repeatable. |
+| `--depends <name>` | Recipe to run first, in order. Repeatable. See [Dependencies](docs/recipe-format.md#dependencies). |
 | `--local` | Write to the nearest local `.ndo.toml` (creating one in the current directory if none is found upward) instead of the central file. |
 | `--desc "<text>"` | Description shown in `ndo list`. |
 
