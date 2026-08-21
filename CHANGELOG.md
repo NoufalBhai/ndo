@@ -7,6 +7,10 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- A logo (`assets/logo-light.svg`, `assets/logo-dark.svg`, `assets/logomark.svg`), wired into the README header via a theme-aware `<picture>` element.
+
 ## [1.0.1] - 2026-08-22
 
 ### Fixed
