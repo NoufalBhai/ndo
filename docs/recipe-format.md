@@ -26,6 +26,11 @@ command = "go test ./..."
 | `description` | string | no | Shown in `ndo list`. |
 | `depends` | array of string | no | Recipe names to run first, in order. See [Dependencies](#dependencies) below. |
 
+A recipe's name can't match one of ndo's own built-in commands (`add`,
+`list`, `edit`, `remove`, `init`, `var`, `completion`, `update`) — `ndo
+add` rejects it, since `ndo <name>` always dispatches to the built-in
+command of that name first, so the recipe could never actually be run.
+
 ## Positional argument binding
 
 ```

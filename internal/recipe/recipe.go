@@ -19,7 +19,7 @@ type Recipe struct {
 	Description string   `toml:"description,omitempty"`
 }
 
-var tokenPattern = regexp.MustCompile(`\{\{\s*([a-zA-Z_][a-zA-Z0-9_]*)(\|raw)?\s*\}\}`)
+var tokenPattern = regexp.MustCompile(`\{\{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*(\|\s*raw)?\s*\}\}`)
 
 // Bind resolves positional args against the recipe's declared params and
 // interpolates them into Command, producing the final shell command line.
@@ -40,7 +40,7 @@ func (r Recipe) Bind(args []string) (string, error) {
 	var interpErr error
 	interpolated := tokenPattern.ReplaceAllStringFunc(r.Command, func(match string) string {
 		groups := tokenPattern.FindStringSubmatch(match)
-		name, raw := groups[1], groups[2] == "|raw"
+		name, raw := groups[1], groups[2] != ""
 
 		value, ok := bound[name]
 		if !ok {

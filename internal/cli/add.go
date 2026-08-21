@@ -21,6 +21,9 @@ func newAddCmd(deps Deps) *cobra.Command {
 		Short: "Add a new recipe",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if reserved := builtinCommandName(cmd.Root(), args[0]); reserved {
+				return fmt.Errorf("%q is a built-in ndo command name — a recipe with that name could never be run as `ndo %s` (it would always run the built-in command instead); pick a different name", args[0], args[0])
+			}
 			return runAdd(deps, cmd.OutOrStdout(), args[0], args[1], params, dependsOn, description, local)
 		},
 	}
@@ -63,6 +66,25 @@ func runAdd(deps Deps, stdout io.Writer, name, command string, params, dependsOn
 
 	fmt.Fprintf(stdout, "added %q to %s\n", name, targetPath)
 	return nil
+}
+
+// builtinCommandName reports whether name matches a registered built-in
+// command (or one of its aliases) somewhere under root — e.g. "list" or
+// "add" — which would make a recipe of that name permanently unreachable
+// via the bare `ndo <name>` invocation, since cobra always dispatches to a
+// matching subcommand before falling back to recipe lookup.
+func builtinCommandName(root *cobra.Command, name string) bool {
+	for _, c := range root.Commands() {
+		if c.Name() == name {
+			return true
+		}
+		for _, alias := range c.Aliases {
+			if alias == name {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // targetFilePath resolves where `add`/`remove`/`edit` should read/write:
