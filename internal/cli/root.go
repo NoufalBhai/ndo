@@ -34,11 +34,15 @@ var (
 // NewRootCmd builds the root command and registers all subcommands.
 func NewRootCmd(version string, deps Deps) *cobra.Command {
 	root := &cobra.Command{
-		Use:           "ndo",
-		Short:         "ndo — a CLI-first, centrally+locally layered task runner",
-		Version:       version,
-		SilenceUsage:  true,
-		SilenceErrors: false,
+		Use:          "ndo",
+		Short:        "ndo — a CLI-first, centrally+locally layered task runner",
+		Version:      version,
+		SilenceUsage: true,
+		// main.go prints every error itself (as "ndo: <err>", after
+		// translating *ExitError to the right process exit code) once
+		// root.Execute() returns it — cobra's own default error printing
+		// must stay off, or every error prints twice.
+		SilenceErrors: true,
 		// Default invocation: `ndo <recipe-name> [args...]`. Cobra falls
 		// back to the root's own RunE whenever args[0] doesn't match a
 		// registered subcommand name, which is what makes plain recipe
