@@ -115,14 +115,15 @@ func installCompletion(root *cobra.Command) (installedTo, shellName string, err 
 		return "", "", fmt.Errorf("resolving home directory: %w", err)
 	}
 
-	shell, ok := detectShell(runtime.GOOS, currentShellEnv())
+	env := currentShellEnv()
+	shell, ok := detectShell(runtime.GOOS, env)
 	if !ok {
 		return "", "", fmt.Errorf("couldn't detect a supported shell (PowerShell or Git Bash) — cmd.exe isn't supported")
 	}
 
 	switch shell {
 	case "powershell":
-		return installCompletionPowerShell()
+		return installCompletionPowerShell(env["PSModulePath"])
 	case "fish":
 		return installCompletionFish(root, home)
 	case "zsh":
@@ -140,7 +141,8 @@ func uninstallCompletion() (path, shellName string, removed bool, err error) {
 		return "", "", false, fmt.Errorf("resolving home directory: %w", err)
 	}
 
-	shell, ok := detectShell(runtime.GOOS, currentShellEnv())
+	env := currentShellEnv()
+	shell, ok := detectShell(runtime.GOOS, env)
 	if !ok {
 		return "", "", false, fmt.Errorf("couldn't detect a supported shell (PowerShell or Git Bash) — cmd.exe isn't supported")
 	}
@@ -159,7 +161,7 @@ func uninstallCompletion() (path, shellName string, removed bool, err error) {
 	var rcPath string
 	switch shell {
 	case "powershell":
-		rcPath, err = resolvePowerShellProfile()
+		rcPath, err = resolvePowerShellProfile(env["PSModulePath"])
 		if err != nil {
 			return "", "", false, err
 		}
@@ -199,8 +201,8 @@ func installCompletionFish(root *cobra.Command, home string) (string, string, er
 	return path, "fish", nil
 }
 
-func installCompletionPowerShell() (string, string, error) {
-	profilePath, err := resolvePowerShellProfile()
+func installCompletionPowerShell(psModulePath string) (string, string, error) {
+	profilePath, err := resolvePowerShellProfile(psModulePath)
 	if err != nil {
 		return "", "", err
 	}
@@ -211,11 +213,37 @@ func installCompletionPowerShell() (string, string, error) {
 	return profilePath, "powershell", nil
 }
 
+// preferredPowerShellBinary picks which PowerShell binary to query first
+// when resolving $PROFILE, based on the invoking session's own
+// PSModulePath. Querying the wrong edition (e.g. asking pwsh for $PROFILE
+// when the live session running `ndo completion install` is actually
+// Windows PowerShell 5.1) writes the completion block to a profile the
+// live session never sources — on a machine with both editions installed,
+// always trying pwsh first got this wrong whenever the invoking session
+// was Windows PowerShell. Windows PowerShell's default PSModulePath
+// always includes a "WindowsPowerShell" path segment; PowerShell 7+'s
+// (pwsh) default doesn't. Kept pure (just a string check) so the
+// preference logic is unit tested without shelling out to either binary.
+func preferredPowerShellBinary(psModulePath string) string {
+	if strings.Contains(strings.ToLower(psModulePath), "windowspowershell") {
+		return "powershell"
+	}
+	return "pwsh"
+}
+
 // resolvePowerShellProfile asks PowerShell itself for $PROFILE rather than
 // guessing between the Windows PowerShell 5.1 and PowerShell 7+ default
-// paths, since only PowerShell knows which one the running session uses.
-func resolvePowerShellProfile() (string, error) {
-	for _, bin := range []string{"pwsh", "powershell"} {
+// paths, since only PowerShell knows which one the running session uses —
+// querying preferredPowerShellBinary(psModulePath) first, so it asks the
+// edition that actually matches the invoking session before falling back
+// to the other one.
+func resolvePowerShellProfile(psModulePath string) (string, error) {
+	preferred := preferredPowerShellBinary(psModulePath)
+	fallback := "powershell"
+	if preferred == "powershell" {
+		fallback = "pwsh"
+	}
+	for _, bin := range []string{preferred, fallback} {
 		out, err := exec.Command(bin, "-NoProfile", "-Command", "$PROFILE").Output()
 		if err == nil {
 			if path := strings.TrimSpace(string(out)); path != "" {

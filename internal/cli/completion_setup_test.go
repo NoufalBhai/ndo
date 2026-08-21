@@ -252,3 +252,46 @@ func TestMaybeOfferCompletionSetupSkipsWhenStdinNotATerminal(t *testing.T) {
 		t.Fatal("CompletionPromptAnswered should stay false when the prompt was never actually shown")
 	}
 }
+
+func TestPreferredPowerShellBinary(t *testing.T) {
+	tests := []struct {
+		name         string
+		psModulePath string
+		want         string
+	}{
+		{
+			name:         "windows powershell 5.1 default PSModulePath",
+			psModulePath: `C:\Users\dev\Documents\WindowsPowerShell\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules`,
+			want:         "powershell",
+		},
+		{
+			name:         "pwsh (powershell 7+) default PSModulePath",
+			psModulePath: `C:\Users\dev\Documents\PowerShell\Modules;C:\Program Files\PowerShell\Modules;c:\program files\powershell\7\Modules`,
+			want:         "pwsh",
+		},
+		{
+			// Regression case for the bug this test exists to catch: always
+			// trying pwsh first — regardless of which edition the live
+			// session invoking `ndo completion install` actually is —
+			// resolved the wrong $PROFILE on a machine with both editions
+			// installed, writing the completion block to a profile the
+			// live session never sources.
+			name:         "case-insensitive match",
+			psModulePath: `c:\users\dev\documents\windowspowershell\modules`,
+			want:         "powershell",
+		},
+		{
+			name:         "empty PSModulePath falls back to pwsh",
+			psModulePath: "",
+			want:         "pwsh",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := preferredPowerShellBinary(tt.psModulePath); got != tt.want {
+				t.Fatalf("preferredPowerShellBinary(%q) = %q, want %q", tt.psModulePath, got, tt.want)
+			}
+		})
+	}
+}

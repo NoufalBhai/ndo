@@ -7,6 +7,22 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-08-21
+
+### Fixed
+
+- `ndo completion install`/`uninstall` (and the one-time completion
+  prompt) always asked `pwsh` for `$PROFILE` before falling back to
+  `powershell`, regardless of which PowerShell edition was actually
+  running the invoking session. On a machine with both Windows PowerShell
+  5.1 and PowerShell 7+ installed, this could resolve the wrong edition's
+  `$PROFILE` and write the completion block to a profile the live session
+  never sources — so completion silently appeared to do nothing. Now
+  picks which binary to query first from the invoking session's own
+  `PSModulePath` (Windows PowerShell's default always includes a
+  `WindowsPowerShell` path segment; PowerShell 7+'s doesn't), so it asks
+  the edition that actually matches the session running the command.
+
 ## [0.4.1] - 2026-08-21
 
 ### Fixed
@@ -161,7 +177,8 @@ and this project follows [Semantic Versioning](https://semver.org/).
   `actions/download-artifact@v8`, `actions/upload-artifact@v7`,
   `softprops/action-gh-release@v3`).
 
-[Unreleased]: https://github.com/green-threads/ndo/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/green-threads/ndo/compare/v0.4.2...HEAD
+[0.4.2]: https://github.com/green-threads/ndo/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/green-threads/ndo/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/green-threads/ndo/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/green-threads/ndo/compare/v0.3.0...v0.3.1
