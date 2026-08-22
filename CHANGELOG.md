@@ -11,6 +11,18 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 - A logo (`assets/logo-light.svg`, `assets/logo-dark.svg`, `assets/logomark.svg`), wired into the README header via a theme-aware `<picture>` element.
 
+## [1.0.2] - 2026-08-22
+
+### Fixed
+
+- Every error printed twice: cobra's own default error printing (`Error:
+  <err>` to stderr) was still enabled alongside `main.go`'s own `ndo:
+  <err>` printing after `root.Execute()` returns an error, so both fired
+  for the same error. Fixed by disabling cobra's own error printing
+  (`SilenceErrors: true`) — `main.go` was already the sole place
+  responsible for formatting and printing errors (and translating
+  `*ExitError` into the right process exit code).
+
 ## [1.0.1] - 2026-08-22
 
 ### Fixed
@@ -232,7 +244,8 @@ forward — see [Versioning](README.md#versioning).
   `actions/download-artifact@v8`, `actions/upload-artifact@v7`,
   `softprops/action-gh-release@v3`).
 
-[Unreleased]: https://github.com/green-threads/ndo/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/green-threads/ndo/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/green-threads/ndo/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/green-threads/ndo/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/green-threads/ndo/compare/v0.4.2...v1.0.0
 [0.4.2]: https://github.com/green-threads/ndo/compare/v0.4.1...v0.4.2

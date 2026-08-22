@@ -10,6 +10,24 @@ import (
 	"github.com/green-threads/ndo/internal/recipe"
 )
 
+// TestExecuteDoesNotPrintErrorItself is a regression test: cobra prints
+// its own "Error: <err>" to stderr by default when a command returns an
+// error, but main.go *also* prints every error itself (as "ndo: <err>",
+// after translating *ExitError to the right exit code) once root.Execute()
+// returns it — so every error was appearing twice on a real run. Guards
+// against SilenceErrors reverting to false.
+func TestExecuteDoesNotPrintErrorItself(t *testing.T) {
+	h := newTestRoot(t, "no-such-recipe-at-all")
+
+	err := h.Execute()
+	if err == nil {
+		t.Fatal("expected an error for a nonexistent recipe")
+	}
+	if h.errOut.Len() != 0 {
+		t.Fatalf("cobra wrote to stderr itself (%q); the caller (main.go) is solely responsible for printing errors", h.errOut.String())
+	}
+}
+
 func TestIsUnderCompletionCmd(t *testing.T) {
 	h := newTestRoot(t)
 
