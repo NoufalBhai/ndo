@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+    <img src="assets/logo-light.svg" alt="ndo" height="72">
+  </picture>
+</p>
+
 # ndo
 
 [![CI](https://github.com/green-threads/ndo/actions/workflows/ci.yml/badge.svg)](https://github.com/green-threads/ndo/actions/workflows/ci.yml)
