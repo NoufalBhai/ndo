@@ -24,3 +24,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GORELEASER_GITHUB_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
+
+      - name: Notify ndo-docs of new release
+        # Tells green-threads/ndo-docs to snapshot its current docs/ as this
+        # version and redeploy. Needs a PAT with write access to that repo
+        # (default GITHUB_TOKEN can't dispatch across repos) stored as the
+        # DOCS_DISPATCH_TOKEN secret here — see ndo-docs' own CI docs for
+        # how that PAT was scoped.
+        run: |
+          curl -sf -X POST \
+            -H "Authorization: Bearer ${{ secrets.DOCS_DISPATCH_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/green-threads/ndo-docs/dispatches \
+            -d "{\"event_type\":\"ndo-release\",\"client_payload\":{\"tag\":\"${{ github.ref_name }}\"}}"
